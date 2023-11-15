@@ -8,5 +8,5 @@ Made for the 23-24 Advanced Computer Science app project.
 
 ## Contributors
 
-Maxwell Henderson
-Milo Lin
+* Maxwell Henderson
+* Milo Lin
