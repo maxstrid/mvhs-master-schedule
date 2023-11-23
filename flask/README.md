@@ -26,8 +26,4 @@ Run the server
 flask --app server run
 ```
 
-Run under debug
-
-```bash
-python3 server.py
-```
+Pass `--debug` to run under debug
