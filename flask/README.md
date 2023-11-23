@@ -23,5 +23,11 @@ pip install -r requirements.txt
 Run the server
 
 ```bash
-flask --app main run
+flask --app server run
+```
+
+Run under debug
+
+```bash
+python3 server.py
 ```
