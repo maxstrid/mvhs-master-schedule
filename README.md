@@ -8,6 +8,10 @@ An app to help manage scheduling conflicts at MVHS.
 
 Made for the 23-24 Advanced Computer Science app project.
 
+## Development
+
+Running `npm start` will start the frontend and flask server. This requires `flask/.venv` to exist.
+
 ## Contributors
 
 * Maxwell Henderson
