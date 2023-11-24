@@ -8,18 +8,12 @@ ScheduleResponseBody = list[dict[str, int | list[str]]]
 class ScheduleResponse:
 
     def __init__(self) -> None:
-        self.body: ScheduleResponseBody | None = None
+        self.body: ScheduleResponseBody = []
 
     def add_classes(self, period: int, classes: list[str]) -> None:
-        if self.body is None:
-            self.body = []
-
         self.body.append({"period": period, "classes": classes})
 
-    def get_response(self) -> dict[str, ScheduleResponseBody] | None:
-        if self.body is None:
-            return None
-
+    def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
 
 
