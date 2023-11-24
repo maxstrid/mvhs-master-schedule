@@ -1,0 +1,31 @@
+#app {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: auto;
+}
+
+#buttonBar {
+    margin-top: auto;
+    margin-bottom: auto;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#schedule {
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.mainButtons {
+    padding: 5px;
+    margin: 10px;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: var(--main-accent-color)
+}
+
+.mainButtons:hover {
+    filter: brightness(75%);
+}
