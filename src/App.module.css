@@ -3,6 +3,7 @@
     flex-direction: row;
     justify-content: center;
     margin: auto;
+    height: 50%;
 }
 
 #buttonBar {
@@ -13,19 +14,27 @@
     flex-direction: column;
 }
 
-#schedule {
-    border: 2px solid black;
-    border-radius: 10px;
-}
+#buttonBar > button {
+    font-size: 15px;
 
-.mainButtons {
-    padding: 5px;
-    margin: 10px;
-    border: 2px solid black;
-    border-radius: 10px;
+    padding: 15px;
+    margin: 15px;
+
+    border: 2px solid transparent;
+    border-radius: 20px;
+    box-shadow: -1px 1px 5px black;
     background-color: var(--main-accent-color)
 }
 
-.mainButtons:hover {
-    filter: brightness(75%);
+#buttonBar > button:hover {
+    filter: brightness(95%);
+}
+
+#buttonBar > button:active {
+    box-shadow: -1px 1px 2px black;
+}
+
+#schedule {
+    border: 2px solid black;
+    border-radius: 10px;
 }

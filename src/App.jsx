@@ -32,9 +32,9 @@ function App() {
     return (
         <div id={style.app}>
             <div id={style.buttonBar}>
-                <button className={style.mainButtons} onClick={regenerate}>Regenerate</button>
-                <button className={style.mainButtons}>Import</button>
-                <button className={style.mainButtons}>Export</button>
+                <button onClick={regenerate}>Regenerate</button>
+                <button>Import</button>
+                <button>Export</button>
             </div>
 
             <div id={style.schedule}>
