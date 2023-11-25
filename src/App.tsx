@@ -1,12 +1,18 @@
-import React, { useState, useCallback, useEffect } from 'react';
-
-import style from './App.module.css';
-import './App.module.css';
+import { useState, useCallback, useEffect } from 'react';
 
 import SchedulePeriod from './SchedulePeriod';
 
+type SchedulePeriodResponse = {
+    period: number;
+    classes: string[];
+}
+
+type ScheduleResponse = {
+    body: SchedulePeriodResponse[];
+}
+
 function App() {
-    const [data, setData] = useState([{}])
+    const [data, setData] = useState<ScheduleResponse | null>(null);
 
     useEffect(() => {
         fetch("/generate_schedule").then(
@@ -18,6 +24,7 @@ function App() {
         )
     }, []);
 
+
     const regenerate = useCallback(() => {
         fetch("/generate_schedule").then(
             res => res.json()
@@ -28,21 +35,20 @@ function App() {
         )
     }, []);
 
-
     return (
-        <div id={style.app}>
-            <div id={style.buttonBar}>
+        <div>
+            <div>
                 <button onClick={regenerate}>Regenerate</button>
                 <button>Import</button>
                 <button>Export</button>
             </div>
 
-            <div id={style.schedule}>
-                {(typeof data[1] == 'undefined') ? (
+            <div>
+                {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
-                    Object.keys(data).map((key) => {
-                        return <SchedulePeriod key={key} classes={data[key]} period={key} />
+                    data?.body.map((period: SchedulePeriodResponse, i: number) => {
+                        return <SchedulePeriod key={i} classes={period.classes} period={period.period} />
                     })
                 )}
             </div>
