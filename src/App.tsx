@@ -39,7 +39,7 @@ function App() {
 
     return (
         <div className='flex flex-col m-auto'>
-            <div className='m-auto'>
+            <div className='m-auto mb-20'>
                 {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
