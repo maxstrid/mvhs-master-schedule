@@ -31,8 +31,8 @@ def test():
 def generate_schedule():
     scheduleRes = ScheduleResponse()
 
-    scheduleRes.add_classes(1, ["a", "b", "c"])
-    scheduleRes.add_classes(2, ["d", "e", "f"])
+    scheduleRes.add_classes(1, ["Advanced CS", "AP Calculus BC", "AP Lit"])
+    scheduleRes.add_classes(2, ["Geometry", "AP CS", "Fine Art"])
 
     return scheduleRes.get_response()
 
