@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import ActionButton from './ActionButton';
 
 import SchedulePeriod from './SchedulePeriod';
 
@@ -36,14 +37,8 @@ function App() {
     }, []);
 
     return (
-        <div>
-            <div>
-                <button onClick={regenerate}>Regenerate</button>
-                <button>Import</button>
-                <button>Export</button>
-            </div>
-
-            <div>
+        <div className='flex flex-col m-auto'>
+            <div className='m-auto'>
                 {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
@@ -51,6 +46,12 @@ function App() {
                         return <SchedulePeriod key={i} classes={period.classes} period={period.period} />
                     })
                 )}
+            </div>
+
+            <div className='m-auto'>
+                <ActionButton onClick={regenerate} content='Regenerate' />
+                <ActionButton onClick={() => { }} content='Import' />
+                <ActionButton onClick={() => { }} content='Export' />
             </div>
         </div >
     );
