@@ -17,17 +17,7 @@ class ScheduleResponse:
         return {"body": self.body}
 
 
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
-
-@app.route("/test")
-def test():
-    return {"info": "This is test data"}
-
-
-@app.route("/generate_schedule", methods=["GET"])
+@app.route("/api/generate_schedule", methods=["GET"])
 def generate_schedule():
     scheduleRes = ScheduleResponse()
 
