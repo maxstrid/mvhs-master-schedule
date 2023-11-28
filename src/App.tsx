@@ -29,10 +29,10 @@ function App() {
 
     const regenerate = useCallback(() => {
         fetch("http://127.0.0.1:5000/generate_schedule").then(
-            res => res
+            res => res.json()
         ).then(
             data => {
-                console.log(data)
+                setData(data)
             }
         )
     }, []);
