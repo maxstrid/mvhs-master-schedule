@@ -17,7 +17,7 @@ function App() {
     const [data, setData] = useState<ScheduleResponse | null>(null);
 
     useEffect(() => {
-        fetch("/generate_schedule").then(
+        fetch("http://127.0.0.1:5000/generate_schedule").then(
             res => res.json()
         ).then(
             data => {
@@ -28,7 +28,7 @@ function App() {
 
 
     const regenerate = useCallback(() => {
-        fetch("/generate_schedule").then(
+        fetch("http://127.0.0.1:5000/generate_schedule").then(
             res => res.json()
         ).then(
             data => {
