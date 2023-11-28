@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
@@ -27,14 +27,17 @@ def test():
     return {"info": "This is test data"}
 
 
-@app.route("/generate_schedule")
+@app.route("/generate_schedule", methods=["GET"])
 def generate_schedule():
     scheduleRes = ScheduleResponse()
 
     scheduleRes.add_classes(1, ["Advanced CS", "AP Calculus BC", "AP Lit"])
     scheduleRes.add_classes(2, ["Geometry", "AP CS", "Fine Art"])
 
-    return scheduleRes.get_response()
+    response = jsonify(scheduleRes.get_response())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 
 if __name__ == "__main__":
