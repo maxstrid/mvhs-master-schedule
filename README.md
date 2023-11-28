@@ -11,7 +11,22 @@ Made for the 23-24 Advanced Computer Science app project.
 
 ## Development
 
+### Setup
+
+Follow the instructions in [/flask](/flask/README.md) to create a .venv directory
+
+Create a `.env.local` file to store the backend url
+```bash
+VITE_BACKEND_URL=""
+```
+
+### Running
+
 Running `npm run dev` will start the frontend and flask server. This requires `flask/.venv` to exist.
+
+### Deployment
+
+Deploy a .env or .env.production file to load production constants
 
 ## Contributors
 
