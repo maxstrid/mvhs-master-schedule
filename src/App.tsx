@@ -17,26 +17,13 @@ type ScheduleResponse = {
 function App() {
     const [data, setData] = useState<ScheduleResponse | null>(null);
 
-    useEffect(() => {
-        fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule").then(
-            res => res.json()
-        ).then(
-            data => {
-                setData(data)
-            }
-        )
+    const fetchData = useCallback(() => {
+        fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule")
+            .then(res => res.json())
+            .then(data => setData(data))
     }, []);
 
-
-    const regenerate = useCallback(() => {
-        fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule").then(
-            res => res.json()
-        ).then(
-            data => {
-                setData(data)
-            }
-        )
-    }, []);
+    useEffect(() => fetchData, []);
 
     return (
         <div className='flex flex-col m-auto'>
@@ -51,7 +38,7 @@ function App() {
             </div>
 
             <div className='m-auto'>
-                <button className='btn' onClick={regenerate} >
+                <button className='btn' onClick={fetchData} >
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
                 </button>
