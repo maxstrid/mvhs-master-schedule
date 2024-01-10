@@ -23,7 +23,7 @@ function App() {
             .then(data => setData(data))
     }, []);
 
-    useEffect(() => fetchData, []);
+    useEffect(() => fetchData, [fetchData]);
 
     return (
         <div className='flex flex-col m-auto'>
