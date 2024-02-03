@@ -14,7 +14,7 @@ type ScheduleResponse = {
     body: SchedulePeriodResponse[];
 }
 
-function App() {
+function App(this: any) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
 
     const fetchData = useCallback(() => {
@@ -24,6 +24,10 @@ function App() {
     }, []);
 
     useEffect(() => fetchData, [fetchData]);
+
+    function uploadFiles() {
+        document.getElementById('selectFile')?.click();
+    }
 
     return (
         <div className='flex flex-col m-auto'>
@@ -42,7 +46,7 @@ function App() {
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
                 </button>
-                <button className='btn'>
+                <button className='btn' onClick={uploadFiles.bind(this)}>
                     <ArrowDownTrayIcon className='h-6 w-6' />
                     <span>Import</span>
                 </button>
@@ -50,6 +54,7 @@ function App() {
                     <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
                 </button>
+                <input id= "selectFile" type="file" style={{display:"none"}}></input>
             </div>
         </div >
     );
