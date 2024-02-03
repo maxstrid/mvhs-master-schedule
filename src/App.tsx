@@ -43,11 +43,11 @@ function App() {
                     <span>Regenerate</span>
                 </button>
                 <button className='btn'>
-                    <ArrowUpTrayIcon className='h-6 w-6' />
+                    <ArrowDownTrayIcon className='h-6 w-6' />
                     <span>Import</span>
                 </button>
                 <button className='btn'>
-                    <ArrowDownTrayIcon className='h-6 w-6' />
+                    <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
                 </button>
             </div>
