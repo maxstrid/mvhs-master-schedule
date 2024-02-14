@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect, MouseEventHandler, ChangeEvent } from 'react';
-import Papa from 'papaparse';
+import { useState, useCallback, useEffect } from 'react';
 
 import './App.css';
 
@@ -18,7 +17,6 @@ type ScheduleResponse = {
 //TODO(max): Add the real type
 function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
-    const [csvFile, setCSV] = useState([]);
 
     const fetchData = useCallback(() => {
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule")
@@ -28,24 +26,6 @@ function App(this: unknown) {
 
     useEffect(() => fetchData, [fetchData]);
 
-    const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files;
-        console.log(file);
-        Papa.parse(file, {
-            header: true,
-            skipEmptyLines: true,
-            complete: (results) => {
-                const columnArray = [];
-                const valuesArray = [];
-
-                results.data.map((d) => {
-                    columnArray.push(Object.keys(d));
-                    valuesArray.push(Object.values(d));
-                });
-                setData(results.data)
-            },
-        });
-    }
 
     return (
         <div className='flex flex-col m-auto'>
@@ -65,8 +45,7 @@ function App(this: unknown) {
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
                 </button>
-                <input id="selectFile" type="file" accept=".csv" onClick={() => handleFile} style={{display:"none"}}></input>
-                <button className='btn' onClick={() => document.querySelector('input[id=selectFile]')?.click()}>
+                <button className='btn'>
                     <ArrowDownTrayIcon className='h-6 w-6' />
                     <span>Import</span>
                 </button>
