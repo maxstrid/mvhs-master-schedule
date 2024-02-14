@@ -42,14 +42,14 @@ function App(this: unknown) {
                     columnArray.push(Object.keys(d));
                     valuesArray.push(Object.values(d));
                 });
-                setCSV(results.data)
+                setData(results.data)
             },
         });
     }
 
     return (
         <div className='flex flex-col m-auto'>
-            <h1 class='m-auto font-bold text-5xl mb-5'>Schedule</h1>
+            <h1 className='m-auto font-bold text-5xl mb-5'>Schedule</h1>
             <div className='m-auto mb-8'>
                 {(data == null) ? (
                     <h1>Loading...</h1>
