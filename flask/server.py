@@ -21,8 +21,13 @@ class ScheduleResponse:
 def generate_schedule():
     scheduleRes = ScheduleResponse()
 
-    scheduleRes.add_classes(1, ["Advanced CS", "AP Calculus BC", "AP Lit"])
-    scheduleRes.add_classes(2, ["Geometry", "AP CS", "Fine Art"])
+    scheduleRes.add_classes(1, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
+    scheduleRes.add_classes(2, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
+    scheduleRes.add_classes(3, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
+    scheduleRes.add_classes(4, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
+    scheduleRes.add_classes(5, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
+    scheduleRes.add_classes(6, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
+    scheduleRes.add_classes(7, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
 
     response = jsonify(scheduleRes.get_response())
     response.headers.add('Access-Control-Allow-Origin', '*')
