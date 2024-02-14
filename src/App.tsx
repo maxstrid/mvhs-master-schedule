@@ -14,7 +14,8 @@ type ScheduleResponse = {
     body: SchedulePeriodResponse[];
 }
 
-function App(this: any) {
+//TODO(max): Add the real type
+function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
 
     const fetchData = useCallback(() => {
@@ -54,7 +55,7 @@ function App(this: any) {
                     <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
                 </button>
-                <input id= "selectFile" type="file" style={{display:"none"}}></input>
+                <input id="selectFile" type="file" style={{ display: "none" }}></input>
             </div>
         </div >
     );
