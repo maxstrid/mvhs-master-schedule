@@ -32,7 +32,8 @@ function App(this: unknown) {
 
     return (
         <div className='flex flex-col m-auto'>
-            <div className='m-auto mb-20'>
+            <h1 class='m-auto font-bold text-5xl mb-5'>Schedule</h1>
+            <div className='m-auto mb-8'>
                 {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
