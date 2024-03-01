@@ -20,9 +20,9 @@ class ScheduleResponse:
         return {"body": self.body}
 
 
-@app.route("/api/generate_schedule", methods=["GET"])
-def generate_schedule():
-    scheduleRes = ScheduleResponse(9)
+@app.route("/api/generate_schedule/grade=<grade>", methods=["GET"])
+def generate_schedule(grade: int):
+    scheduleRes = ScheduleResponse(grade)
 
     scheduleRes.add_classes(1, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
     scheduleRes.add_classes(2, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])

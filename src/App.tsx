@@ -20,12 +20,13 @@ type ScheduleResponse = {
 //TODO(max): Add the real type
 function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
+    const [grade, setGrade] = useState<number>(9)
 
     const fetchData = useCallback(() => {
-        fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule")
+        fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
             .then(res => res.json())
             .then(data => setData(data))
-    }, []);
+    }, [grade]);
 
     useEffect(() => fetchData, [fetchData]);
 
