@@ -11,7 +11,10 @@ type SchedulePeriodResponse = {
 }
 
 type ScheduleResponse = {
-    body: SchedulePeriodResponse[];
+    body: {
+        grade: number,
+        schedule: SchedulePeriodResponse[]
+    };
 }
 
 //TODO(max): Add the real type
@@ -34,7 +37,7 @@ function App(this: unknown) {
                 {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
-                    data?.body.map((period: SchedulePeriodResponse, i: number) => {
+                    data?.body.schedule.map((period: SchedulePeriodResponse, i: number) => {
                         return <SchedulePeriod key={i} classes={period.classes} period={period.period} />
                     })
                 )}

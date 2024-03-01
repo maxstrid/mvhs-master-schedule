@@ -2,16 +2,19 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-ScheduleResponseBody = list[dict[str, int | list[str]]]
+ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
 
 
 class ScheduleResponse:
 
-    def __init__(self) -> None:
-        self.body: ScheduleResponseBody = []
+    def __init__(self, grade_level: int) -> None:
+        self.body: ScheduleResponseBody = {
+            "grade": grade_level,
+            "schedule": []
+        }
 
     def add_classes(self, period: int, classes: list[str]) -> None:
-        self.body.append({"period": period, "classes": classes})
+        self.body["schedule"].append({"period": period, "classes": classes})
 
     def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
@@ -19,7 +22,7 @@ class ScheduleResponse:
 
 @app.route("/api/generate_schedule", methods=["GET"])
 def generate_schedule():
-    scheduleRes = ScheduleResponse()
+    scheduleRes = ScheduleResponse(9)
 
     scheduleRes.add_classes(1, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
     scheduleRes.add_classes(2, ["Geometry", "AP CS", "Fine Art", "Advanced CS", "Advanced CS", "AP Calculus BC", "AP Lit"])
