@@ -41,9 +41,9 @@ function App(this: unknown) {
         <div className='flex flex-col m-auto'>
             <div className='text-center'>
                 <h1 className='m-auto font-bold text-5xl mb-5'>Schedule</h1>
-                <form onSubmit={switchGrade}>
+                <form className='flex justify-center' onSubmit={switchGrade}>
                     <label className='btn hover:bg-yellow-300 m-1'>
-                        Grade
+                        <p className='mr-2'>Grade</p>
                         <select className='bg-yellow-300 rounded-md' name="selectedGrade" defaultValue="9">
                             <option value="9">9</option>
                             <option value="10">10</option>
