@@ -1,5 +1,4 @@
 from flask import Flask, jsonify
-
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
@@ -14,7 +13,9 @@ class ScheduleResponse:
         }
 
     def add_classes(self, period: int, classes: list[str]) -> None:
-        self.body["schedule"].append({"period": period, "classes": classes})
+        # This is needed so mypy is happy with us assuming there is a .append function on this type.
+        if type(self.body['schedule']) is list:
+            self.body["schedule"].append({"period": period, "classes": classes})
 
     def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
