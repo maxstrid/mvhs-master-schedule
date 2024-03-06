@@ -17,20 +17,27 @@ def main():
   df["courseNumber3"] = ""
   df["courseName3"] = ""
   df["courseRequests3"] = ""
+  df["conflictingCourseNumber"] = ""
 
   with open(filename, 'r') as file:
     counter = 0
+    currentCourseNumber = ""
     for line in file:
       if counter <= 1:
         counter += 1
         continue
       row = line.strip().split(",")
+      if (len(row) == 2):
+        if (row[0] != currentCourseNumber):
+          currentCourseNumber = row[0]
       if (len(row) == 9):
+        row.append(currentCourseNumber)
         df.loc[len(df.index)] = row
       elif len(row) == 6:
         row.append("")
         row.append("")
         row.append(0)
+        row.append(currentCourseNumber)
   print(df)
 
 if __name__ == "__main__":
