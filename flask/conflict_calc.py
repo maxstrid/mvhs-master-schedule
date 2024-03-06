@@ -19,8 +19,19 @@ def main():
   df["courseRequests3"] = ""
 
   with open(filename, 'r') as file:
+    counter = 0
     for line in file:
-      print(line)
+      if counter <= 1:
+        counter += 1
+        continue
+      row = line.strip().split(",")
+      if (len(row) == 9):
+        df.loc[len(df.index)] = row
+      elif len(row) == 6:
+        row.append("")
+        row.append("")
+        row.append(0)
+  print(df)
 
 if __name__ == "__main__":
   main()
