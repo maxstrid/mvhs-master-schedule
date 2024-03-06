@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 
 import './App.css';
 
-import SchedulePeriod from './SchedulePeriod';
+import { Schedule } from './Schedule';
 import { ArrowDownTrayIcon, ArrowPathIcon, ArrowUpTrayIcon } from '@heroicons/react/20/solid';
 
 type SchedulePeriodResponse = {
@@ -58,9 +58,15 @@ function App(this: unknown) {
                 {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
-                    data?.body.schedule.map((period: SchedulePeriodResponse, i: number) => {
-                        return <SchedulePeriod key={i} classes={period.classes} period={period.period} />
-                    })
+                    <Schedule periods={data.body.schedule.map((element: SchedulePeriodResponse) => {
+                        return {
+                            period: element.period,
+                            classes: element.classes.map((className: string) => ({
+                                name: className,
+                                id: className,
+                            })),
+                        };
+                    })} />
                 )}
             </div>
 
