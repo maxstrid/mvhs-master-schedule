@@ -1,12 +1,11 @@
 import pandas as pd
 import os
 
+# fixes issues with relative paths and running file from different locations
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, 'conflict_matrix.txt')
 
 def main():
-  # fixes issues with relative paths and running file from different locations
-  dirname = os.path.dirname(__file__)
-  filename = os.path.join(dirname, 'conflict_matrix.txt')
-
   df = pd.DataFrame()
   df["courseNumber1"] = ""
   df["courseName1"] = ""
@@ -38,7 +37,7 @@ def main():
         row.append("")
         row.append(0)
         row.append(currentCourseNumber)
-  print(df)
+    print(df)
 
 if __name__ == "__main__":
   main()
