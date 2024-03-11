@@ -37,6 +37,7 @@ def main():
         row.append("")
         row.append(0)
         row.append(currentCourseNumber)
+        df.loc[len(df.index)] = row
     print(df)
 
 if __name__ == "__main__":
