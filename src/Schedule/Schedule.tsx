@@ -8,11 +8,11 @@ export type SchedulePeriod = {
     }[];
 }
 
-type ScheduleProps = {
+export type ScheduleProps = {
     periods: SchedulePeriod[];
 };
 
-export class Schedule extends React.Component {
+export class Schedule extends React.Component<ScheduleProps> {
     periods: SchedulePeriod[];
 
     constructor(props: ScheduleProps) {
