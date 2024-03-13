@@ -63,6 +63,7 @@ function App(this: unknown) {
                             period: element.period,
                             classes: element.classes.map((className: string) => ({
                                 name: className,
+                                // TOOD(max): Make this use a classid returned from the api
                                 id: className,
                             })),
                         };
