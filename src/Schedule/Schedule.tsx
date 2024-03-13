@@ -58,9 +58,8 @@ export class Schedule extends React.Component<ScheduleProps, ScheduleState> {
     }
 
     swapClasses() {
-
         this.setState((prev_state: ScheduleState) => {
-            const selected_classes = Array.from(prev_state.selected_classes);
+            const selected_classes = prev_state.selected_classes;
             const periods = prev_state.periods.map((period: SchedulePeriod, i: number) => {
                 return {
                     period: period.period,
@@ -88,8 +87,11 @@ export class Schedule extends React.Component<ScheduleProps, ScheduleState> {
 
             return {
                 periods: periods,
+                // Un-highlight the two classes
+                selected_classes: new Array<ClassId>(),
             }
         });
+
     }
 
     render() {
