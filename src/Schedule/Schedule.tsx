@@ -43,13 +43,16 @@ export class Schedule extends React.Component<ScheduleProps, ScheduleState> {
         }
 
         this.setState((prev_state: ScheduleState) => {
-            const selected_classes: Array<ClassId> = [...prev_state.selected_classes];
+            let selected_classes: Array<ClassId> = [...prev_state.selected_classes];
 
             if (this.classesContaints(id)) {
-                selected_classes.splice(selected_classes.indexOf(id), 1);
+                selected_classes = selected_classes.filter(element =>
+                    element.i != id.i || element.j != id.j
+                );
             } else {
                 selected_classes.push(id);
             }
+
 
             return {
                 selected_classes: selected_classes
