@@ -20,13 +20,15 @@ type ScheduleResponse = {
 //TODO(max): Add the real type
 function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
-    const [grade, setGrade] = useState<number>(9)
+    const [dataCounter, setDataCounter] = useState<number>(0);
+    const [grade, setGrade] = useState<number>(9);
 
     const fetchData = useCallback(() => {
-        console.log(grade);
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
             .then(res => res.json())
-            .then(data => setData(data))
+            .then(data => setData(data));
+
+        setDataCounter(prevDataCounter => prevDataCounter + 1);
     }, [grade]);
 
     function switchGrade(e: React.FormEvent<HTMLFormElement>) {
@@ -67,7 +69,7 @@ function App(this: unknown) {
                                 id: className,
                             })),
                         };
-                    })} />
+                    })} key={dataCounter} />
                 )}
             </div>
 
