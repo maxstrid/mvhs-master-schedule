@@ -123,7 +123,7 @@ export class Schedule extends React.Component<ScheduleProps, ScheduleState> {
                 })
                 }
                 {(this.state.selected_classes.length > 1) ?
-                    <button className='btn' onClick={() => { this.swapClasses() }}>Swap</button>
+                    <button className='btn m-auto justify-center pr-4 pl-4' onClick={() => { this.swapClasses() }}>Swap</button>
                     :
                     <></>
                 }
