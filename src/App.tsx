@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 
 import './App.css';
 
-import SchedulePeriod from './SchedulePeriod';
+import { Schedule, SchedulePeriod } from './Schedule';
 import { ArrowDownTrayIcon, ArrowPathIcon, ArrowUpTrayIcon } from '@heroicons/react/20/solid';
 
 type SchedulePeriodResponse = {
@@ -20,13 +20,15 @@ type ScheduleResponse = {
 //TODO(max): Add the real type
 function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
-    const [grade, setGrade] = useState<number>(9)
+    const [dataCounter, setDataCounter] = useState<number>(0);
+    const [grade, setGrade] = useState<number>(9);
 
     const fetchData = useCallback(() => {
-        console.log(grade);
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
             .then(res => res.json())
-            .then(data => setData(data))
+            .then(data => setData(data));
+
+        setDataCounter(prevDataCounter => prevDataCounter + 1);
     }, [grade]);
 
     const calcConflict = useCallback(
@@ -62,9 +64,16 @@ function App(this: unknown) {
                 {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
-                    data?.body.schedule.map((period: SchedulePeriodResponse, i: number) => {
-                        return <SchedulePeriod key={i} classes={period.classes} period={period.period} />
-                    })
+                    <Schedule periods={data.body.schedule.map((element: SchedulePeriodResponse): SchedulePeriod => {
+                        return {
+                            period: element.period,
+                            classes: element.classes.map((className: string) => ({
+                                name: className,
+                                // TOOD(max): Make this use a classid returned from the api
+                                id: className,
+                            })),
+                        };
+                    })} key={dataCounter} />
                 )}
             </div>
 
