@@ -114,7 +114,7 @@ export class Schedule extends React.Component<ScheduleProps, ScheduleState> {
 
                                 return (
                                     <button key={j}
-                                        className={`m-auto p-2 mr-1 ml-1 ${this.classesContaints(id) ? 'bg-yellow-300' : 'bg-gray-300'} rounded-md`}
+                                        className={`m-auto p-1 border-2 border-transparent mr-1 ml-1 ${this.classesContaints(id) ? 'bg-yellow-300' : 'bg-gray-300'} rounded-md`}
                                         onClick={() => { this.activateButton(id) }}
                                     >
                                         {schedule_class.name}
