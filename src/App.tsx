@@ -47,10 +47,9 @@ function App(this: unknown) {
                     <label className='btn hover:bg-yellow-300 m-1'>
                         <p className='mr-2'>Grade</p>
                         <select className='bg-yellow-300 rounded-md' name="selectedGrade" defaultValue="9">
-                            <option value="9">9</option>
-                            <option value="10">10</option>
-                            <option value="11">11</option>
-                            <option value="12">12</option>
+                            {[9, 10, 11, 12].map(grade =>
+                                <option value={grade} key={grade}>{grade}</option>
+                            )}
                         </select>
                     </label>
                     <button className='btn bg-yellow-300 m-1' type="submit">Switch</button>
