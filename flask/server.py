@@ -38,6 +38,8 @@ def generate_schedule(grade: int):
 
     return response
 
+@app.route("/api/calc_period_conflicts", methods=["GET"])
+def calc_period_conflicts()
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -29,6 +29,10 @@ function App(this: unknown) {
             .then(data => setData(data))
     }, [grade]);
 
+    const calcConflict = useCallback(
+        
+    );
+
     function switchGrade(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const formData = new FormData(e.currentTarget!);
@@ -76,6 +80,9 @@ function App(this: unknown) {
                 <button className='btn'>
                     <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
+                </button>
+                <button className='btn'>
+                    <span>Calc Conflicts</span>
                 </button>
             </div>
         </div >

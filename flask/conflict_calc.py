@@ -38,7 +38,19 @@ def main():
         row.append(0)
         row.append(currentCourseNumber)
         df.loc[len(df.index)] = row
-    print(df)
+  course_list = {}
+  currentCourseNumber = df["conflictingCourseNumber"][0]
+  fillingRow = {}
+  for row in df.index:
+    if (df["conflictingCourseNumber"][row] != currentCourseNumber):
+      fillingRow = {}
+      currentCourseNumber = df["conflictingCourseNumber"][row]
+    fillingRow[df["courseName1"][row]] = df["courseRequests1"][row]
+    fillingRow[df["courseName2"][row]] = df["courseRequests2"][row]
+    fillingRow[df["courseName3"][row]] = df["courseRequests3"][row]
+    course_list[df["conflictingCourseNumber"][row]] = fillingRow
+
+  print(course_list['AA5010'])
 
 if __name__ == "__main__":
   main()
