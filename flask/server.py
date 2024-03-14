@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from conflict_calc import calcPeriodConflicts
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
@@ -39,7 +40,8 @@ def generate_schedule(grade: int):
     return response
 
 @app.route("/api/calc_period_conflicts", methods=["GET"])
-def calc_period_conflicts()
+def calc_period_conflicts(period: list):
+
 
 if __name__ == "__main__":
     app.run(debug=True)
