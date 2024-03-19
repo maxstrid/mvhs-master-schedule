@@ -69,10 +69,10 @@ export function Schedule(props: ScheduleProps) {
 
     return (
         <div className='m-auto flex flex-col'>
-            <table className='flex flex-row m-auto ml-2 mr-2'>
+            <table className='flex flex-row m-2 bg-gray-50 shadow-md rounded-xl p-4'>
                 {periods.map((period: SchedulePeriod, i: number) => {
                     return (
-                        <td className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-md bg-yellow-100' key={i}>
+                        <td className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-xl shadow-md bg-gray-100' key={i}>
                             Period {period.period}
                             {period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
                                 const id: ClassId = {
@@ -84,7 +84,7 @@ export function Schedule(props: ScheduleProps) {
                                     <tr>
                                         <button key={j}
                                             className={`p-1 border-2 border-transparent mt-1 mb-1 ${classesContains(id) ?
-                                                'bg-yellow-300' : 'bg-gray-300'} rounded-md w-full`}
+                                                'bg-yellow-300' : 'bg-gray-300'}  rounded-md w-full`}
                                             onClick={() => { toggleClass(id) }}
                                         >
                                             {schedule_class.name}
