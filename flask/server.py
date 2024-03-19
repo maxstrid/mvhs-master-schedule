@@ -21,6 +21,19 @@ class ScheduleResponse:
     def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
 
+class ConflictResponse:
+    def __init__(self, period: list) -> None:
+        self.body: ConflictResponseBody = {
+            "conflicts": 0
+        }
+        self.currentPeriod = period
+
+    def calc_conflicts(self) -> None:
+        self.body["conflicts"] = calcPeriodConflicts(self.currentPeriod)
+
+    def get_response(self) -> dict[str, ConflictResponseBody]:
+        return {"body": self.body}
+
 
 @app.route("/api/generate_schedule/grade=<grade>", methods=["GET"])
 def generate_schedule(grade: int):
@@ -41,7 +54,10 @@ def generate_schedule(grade: int):
 
 @app.route("/api/calc_period_conflicts", methods=["GET"])
 def calc_period_conflicts(period: list):
-
+    conflictRes = ConflictResponse(period)
+    response = jsonify(conflictRes.get_response())
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)

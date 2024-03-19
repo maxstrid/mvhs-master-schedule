@@ -22,6 +22,7 @@ function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
+    const [conflictsNumber, setConflictsNum] = useState<number>(0);
 
     const fetchData = useCallback(() => {
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
@@ -31,9 +32,11 @@ function App(this: unknown) {
         setDataCounter(prevDataCounter => prevDataCounter + 1);
     }, [grade]);
 
-    const calcConflict = useCallback(
-        
-    );
+    const calcConflict = useCallback(() => {
+        fetch(import.meta.env.VITE_BACKEND_URL + "/api/calc_period_conflicts")
+            .then(res => res.json())
+            .then(data => setConflictsNum(data));
+    }, []);
 
     function switchGrade(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
