@@ -62,8 +62,16 @@ def get_number(Tclass: str, Cclass:str):
 
 
 def calcPeriodConflicts(period: list):
-  for course in period:
-    for i in range(len(period) + 1)
+  conflict_number = 0
+  for i in range(len(period)):
+    for j in range(i + 1, len(period)):
+      # print(course_list[period[i]][period[j]])
+      conflict_number += int(course_list[period[i]][period[j]])
+  return conflict_number
+
 
 if __name__ == "__main__":
   main()
+
+  # mock data
+  print(calcPeriodConflicts(['AP Calc BC', 'AVID Tutor', 'AP Stat']))
