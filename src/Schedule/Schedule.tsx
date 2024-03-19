@@ -68,33 +68,35 @@ export function Schedule(props: ScheduleProps) {
     }, [highlightedClasses, classesContains]);
 
     return (
-        <div className='m-auto'>
-            {periods.map((period: SchedulePeriod, i: number) => {
-                return (
-                    <div className='flex' key={i}>
-                        <div className='mr-4 mb-1 mt-1 p-2 rounded-md bg-yellow-100'>
+        <div className='m-auto flex flex-col'>
+            <table className='flex flex-row m-auto ml-2 mr-2'>
+                {periods.map((period: SchedulePeriod, i: number) => {
+                    return (
+                        <td className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-md bg-yellow-100' key={i}>
                             Period {period.period}
-                        </div>
-                        {period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
-                            const id: ClassId = {
-                                i: i,
-                                j: j
-                            };
+                            {period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
+                                const id: ClassId = {
+                                    i: i,
+                                    j: j
+                                };
 
-                            return (
-                                <button key={j}
-                                    className={`m-auto p-1 border-2 border-transparent mr-1 ml-1 ${classesContains(id) ?
-                                        'bg-yellow-300' : 'bg-gray-300'} rounded-md`}
-                                    onClick={() => { toggleClass(id) }}
-                                >
-                                    {schedule_class.name}
-                                </button>
-                            )
-                        })}
-                    </div>
-                )
-            })
-            }
+                                return (
+                                    <tr>
+                                        <button key={j}
+                                            className={`p-1 border-2 border-transparent mt-1 mb-1 ${classesContains(id) ?
+                                                'bg-yellow-300' : 'bg-gray-300'} rounded-md w-full`}
+                                            onClick={() => { toggleClass(id) }}
+                                        >
+                                            {schedule_class.name}
+                                        </button>
+                                    </tr>
+                                )
+                            })}
+                        </td>
+                    )
+                })
+                }
+            </table>
             {(highlightedClasses.length > 1) ?
                 <button className='btn m-auto justify-center pr-4 pl-4' onClick={swapClasses}>Swap</button>
                 :
