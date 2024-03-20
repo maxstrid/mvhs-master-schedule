@@ -19,13 +19,21 @@ df["conflictingCourseName"] = ""
 
 def main():
   global course_list
+  # this parses through the file conflict matrix file
+  # and puts the data into a pandas data frame for easier analysis
   with open(filename, 'r') as file:
     counter = 0
     currentCourseName = ""
     for line in file:
+      # skips first two uneeded rows
       if counter <= 1:
         counter += 1
         continue
+
+      # splits each row of the file by commas
+      # sorts the values into the data frame
+      # if row only contains two comparing classes, blank placeholder values
+      # adds comparing class to the last column
       row = line.strip().split(",")
       if (len(row) == 2):
         if (row[1] != currentCourseName):
@@ -39,7 +47,12 @@ def main():
         row.append(0)
         row.append(currentCourseName)
         df.loc[len(df.index)] = row
+
+  # creates map containing class and its corresponding conflicts with each class
   course_list = {}
+
+  # adds number of conflicts for each class to the comparing class
+  # creates a new filling row if conflicting class changes
   currentCourseName = df["conflictingCourseName"][0]
   fillingRow = {}
   for row in df.index:
@@ -51,7 +64,7 @@ def main():
     fillingRow[df["courseName3"][row]] = df["courseRequests3"][row]
     course_list[df["conflictingCourseName"][row]] = fillingRow
 
-  print(course_list['AP Calc BC'])
+  # print(course_list['AP Calc BC'])
 
 def get_number(Tclass: str, Cclass:str):
   if (Tclass == Cclass):
