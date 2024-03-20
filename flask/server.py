@@ -1,8 +1,9 @@
-from flask import Flask, jsonify
-from conflict_calc import calcPeriodConflicts
+from flask import Flask, jsonify, request
+from conflict_calc import ConflictCalculator
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
+ConflictResponseBody = dict[str, int]
 
 
 class ScheduleResponse:
@@ -29,7 +30,7 @@ class ConflictResponse:
         self.currentPeriod = period
 
     def calc_conflicts(self) -> None:
-        self.body["conflicts"] = calcPeriodConflicts(self.currentPeriod)
+        self.body["conflicts"] = ConflictCalculator.calcPeriodConflicts(self.currentPeriod)
 
     def get_response(self) -> dict[str, ConflictResponseBody]:
         return {"body": self.body}
@@ -52,8 +53,12 @@ def generate_schedule(grade: int):
 
     return response
 
-@app.route("/api/calc_period_conflicts", methods=["GET"])
-def calc_period_conflicts(period: list):
+# does not actually updating anything
+# just calculates conflicts
+@app.route("/api/calc_period_conflicts", methods=["POST"])
+def calc_period_conflicts():
+    period = request.get_json()
+    print(period)
     conflictRes = ConflictResponse(period)
     response = jsonify(conflictRes.get_response())
     response.headers.add('Access-Control-Allow-Origin', '*')
