@@ -17,19 +17,11 @@ type ScheduleResponse = {
     };
 }
 
-type ConflictCalcRequest = {
-    body: {
-        period: string[]
-    };
-}
-
 //TODO(max): Add the real type
 function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
-    const [currentPeriod, setPeriod] = useState<number[]>([]);
-    const [conflictsNumber, setConflictsNum] = useState<number>(0);
 
     const fetchData = useCallback(() => {
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
@@ -38,18 +30,6 @@ function App(this: unknown) {
 
         setDataCounter(prevDataCounter => prevDataCounter + 1);
     }, [grade]);
-
-    const calcConflict = (e) => {
-        e.preventDefault();
-        const data: ConflictCalcRequest = {period: currentPeriod};
-        console.log(data);
-        fetch(import.meta.env.VITE_BACKEND_URL + "/api/calc_period_conflicts", {
-            method: 'POST',
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(data)
-        }).then(res => res.json())
-        .then(currentPeriod => setConflictsNum(currentPeriod));
-    };
 
     function switchGrade(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -106,10 +86,6 @@ function App(this: unknown) {
                     <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
                 </button>
-                <button className='btn' onClick={calcConflict}>
-                    <span>Calc Conflicts</span>
-                </button>
-                <h1>{conflictsNumber}</h1>
             </div>
         </div >
     );
