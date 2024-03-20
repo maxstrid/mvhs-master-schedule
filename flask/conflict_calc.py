@@ -73,9 +73,10 @@ class ConflictCalculator:
   def calcPeriodConflicts(self, period: list):
     conflict_number = 0
     for i in range(len(period)):
-      for j in range(i + 1, len(period)):
-        # print(course_list[period[i]][period[j]])
-        conflict_number += int(self.course_list[period[i]][period[j]])
+        for j in range(i + 1, len(period)):
+            if period[j] not in self.course_list[period[i]]:
+                continue
+            conflict_number += int(self.course_list[period[i]][period[j]])
     return conflict_number
 
 if __name__ == "__main__":
