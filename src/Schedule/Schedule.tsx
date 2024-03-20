@@ -37,12 +37,12 @@ export function Schedule(props: ScheduleProps) {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(periods[i].classes)
             }).then(res => res.json())
-                .then((currentPeriod: any) => {
+                .then(currentPeriod =>
                     setClassConflicts(classConflicts => [...classConflicts, {
                         period: i,
                         total_conflicts: currentPeriod.conflicts,
                     }])
-                });
+                );
         }
     }, [periods]);
 
@@ -97,12 +97,14 @@ export function Schedule(props: ScheduleProps) {
 
     return (
         <div className='m-auto flex flex-col'>
-            <table className='flex flex-row m-2 bg-gray-50 shadow-md rounded-xl p-4'>
+            <div className='flex flex-row m-2 bg-gray-50 shadow-md rounded-xl p-4'>
                 {periods.map((period: SchedulePeriod, i: number) => {
                     return (
-                        <tr className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-xl shadow-md bg-gray-100' key={swapCounter + i}>
-                            <p>Period {period.period}</p>
-                            <p>Conflicts: {(classConflicts.length != 0 && classConflicts[i] != undefined) ? classConflicts[i].total_conflicts : 0}</p>
+                        <div className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-xl shadow-md bg-gray-100' key={swapCounter + i}>
+                            <div>
+                                <p>Period {period.period}</p>
+                                <p>Conflicts: {(classConflicts.length != 0 && classConflicts[i] != undefined) ? classConflicts[i].total_conflicts : 0}</p>
+                            </div>
                             {period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
                                 const id: ClassId = {
                                     i: i,
@@ -110,7 +112,7 @@ export function Schedule(props: ScheduleProps) {
                                 };
 
                                 return (
-                                    <tr key={swapCounter + i + j}>
+                                    <div key={swapCounter + i + j}>
                                         <button
                                             className={`p-1 border-2 border-transparent mt-1 mb-1 ${classesContains(id) ?
                                                 'bg-yellow-300' : 'bg-gray-300'}  rounded-md w-full`}
@@ -118,14 +120,14 @@ export function Schedule(props: ScheduleProps) {
                                         >
                                             {schedule_class.name}
                                         </button>
-                                    </tr>
+                                    </div>
                                 )
                             })}
-                        </tr>
+                        </div>
                     )
                 })
                 }
-            </table>
+            </div>
             {
                 (highlightedClasses.length > 1) ?
                     <button className='btn m-auto justify-center pr-4 pl-4' onClick={swapClasses}>Swap</button>
