@@ -1,6 +1,6 @@
 import unittest
 
-from schedule_generator import Graph, assign_classes
+from .schedule_generator import Graph, assign_classes
 
 class TestScheduleGenerator(unittest.TestCase):
     def test_basic_schedule(self):

@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from conflict_calc import ConflictCalculator
+from conflict.conflict_calc import ConflictCalculator
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
