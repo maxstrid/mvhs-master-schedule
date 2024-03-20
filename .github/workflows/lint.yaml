@@ -28,4 +28,4 @@ jobs:
           python -m pip install -U pip mypy
           pip install -r flask/requirements.txt
       - name: mypy
-        run: mypy flask/ --install-types
+        run: mypy flask/

@@ -1,4 +1,5 @@
 numpy
 flask
 pandas
-os
+pandas-stubs
+types-colorama
