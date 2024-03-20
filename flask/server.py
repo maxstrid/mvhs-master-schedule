@@ -1,8 +1,8 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from conflict_calc import ConflictCalculator
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
-
 
 class ScheduleResponse:
 
@@ -20,7 +20,6 @@ class ScheduleResponse:
     def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
 
-
 @app.route("/api/generate_schedule/grade=<grade>", methods=["GET"])
 def generate_schedule(grade: int):
     scheduleRes = ScheduleResponse(grade)
@@ -37,7 +36,6 @@ def generate_schedule(grade: int):
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
-
 
 if __name__ == "__main__":
     app.run(debug=True)
