@@ -36,7 +36,6 @@ class Graph:
 
         return buffer
 
-
 def assign_classes(graph: Graph):
     schedule: dict[int, set[str]] = {}
 
@@ -44,8 +43,12 @@ def assign_classes(graph: Graph):
 
     for node in graph:
         sorted_classes = list(graph.get(node))
+        # Orders the classses by ones with the most conflicts
         sorted_classes.sort(key = lambda x: x[1], reverse = True)
 
+        # We iterate through each class and assign it to a class if it hasn't been assigned
+        # This tries to make sure classes with the highest conflicts are assigned to different periods
+        # TODO: Check this actually works as expected with a real schedule
         for i, item in enumerate(sorted_classes[0:5]):
             if i not in schedule:
                 schedule[i] = set()
