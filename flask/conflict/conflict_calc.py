@@ -84,5 +84,6 @@ if __name__ == "__main__":
   main.parseFile()
   # mock data
   print(main.course_list)
+  print(main.calcPeriodConflicts(["AP Calc BC", "Adv Comp Sci", "AP Physics I", "AP Chem", "AP Calc BC", "American Lit H"]))
   assert main.calcPeriodConflicts(['AP Calc BC', 'AVID Tutor', 'AP Stat']) == 51
   print("Testing data is calculated correctly")

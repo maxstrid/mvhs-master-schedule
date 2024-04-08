@@ -8,5 +8,10 @@ class TestConflictCalculator(unittest.TestCase):
         calculator.parseFile()
         self.assertEqual(calculator.calcPeriodConflicts(['AP Calc BC', 'AVID Tutor', 'AP Stat']), 51)
 
+    def test_period(self):
+        calculator = ConflictCalculator()
+        calculator.parseFile()
+        self.assertEqual(calculator.calcPeriodConflicts(["AP Calc BC", "Adv Comp Sci", "AP Physics I", "AP Chem", "AP Calc BC", "American Lit H"]), 755)
+
 if __name__ == '__main__':
     unittest.main()
