@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import pandas as pd
 from conflict.conflict_calc import ConflictCalculator
 app = Flask(__name__)
 
@@ -8,6 +9,8 @@ ConflictResponseBody = dict[str, int]
 
 conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
+
+current_class_list = []
 
 class ConflictResponse:
 
@@ -76,6 +79,14 @@ def calc_period_conflicts(period: int):
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
+
+@app.route("/api/import_csv_data", methods=["POST"])
+def import_csv_data():
+    csv_file = request.files['file']
+    print(csv_file)
+    parsed_csv_file = pd.read_csv(csv_file)
+    print(parsed_csv_file)
+    return ""
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,9 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 import './App.css';
 
 import { Schedule, SchedulePeriod } from './Schedule';
 import { ArrowDownTrayIcon, ArrowPathIcon, ArrowUpTrayIcon } from '@heroicons/react/20/solid';
+
+import Papa from 'papaparse';
 
 type SchedulePeriodResponse = {
     period: number;
@@ -22,6 +24,9 @@ function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
+    const [importData, setImportData] = useState<any[]>([]);
+
+    const fileInput = useRef();
 
     const fetchData = useCallback(() => {
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
@@ -36,6 +41,31 @@ function App(this: unknown) {
         const formData = new FormData(e.currentTarget!);
         setGrade(parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString()));
     }
+
+    const handleFileUpload = useCallback((e) => {
+        const file = e.target.files[0];
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            delimiter: ",",
+            complete: (results: any) => {
+                console.log(results);
+                setImportData(results.data);
+            }
+        })
+        // fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
+        //     method: 'POST',
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify(periods[i].classes)
+        // }).then(res => res.json())
+        //     .then(currentPeriod =>
+        //         setClassConflicts(classConflicts => [...classConflicts, {
+        //             period: i,
+        //             total_conflicts: currentPeriod.conflicts,
+        //         }])
+        //     );
+        console.log(importData[0][0]);
+    }, [importData]);
 
     useEffect(() => fetchData(), [fetchData, grade]);
 
@@ -77,15 +107,17 @@ function App(this: unknown) {
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
                 </button>
-                <button className='btn'>
+                <button className='btn' onClick={()=>fileInput.current.click()}>
                     <ArrowDownTrayIcon className='h-6 w-6' />
                     <span>Import</span>
                 </button>
+                <input ref={fileInput} type="file" accept=".csv" onChange={handleFileUpload} hidden></input>
                 <button className='btn'>
                     <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
                 </button>
             </div>
+            <h1>{importData}</h1>
         </div >
     );
 }
