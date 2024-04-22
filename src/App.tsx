@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, createRef } from 'react';
 
 import './App.css';
 
@@ -19,15 +19,26 @@ type ScheduleResponse = {
     };
 }
 
+type DataRow = {
+    "Grade 9": string,
+    "Grade 10": string,
+    "Grade 11": string,
+    "Grade 12": string,
+    "Total # of Sections": string,
+    "Total # of Sections_1": string,
+    "Total # of Sections_2": string,
+    "Total # of Sections_3": string,
+}
+
 //TODO(max): Add the real type
 function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
-    const [importData, setImportData] = useState<string[]>([]);
+    const [importData, setImportData] = useState<DataRow[]>([]);
     const [fileImported, setFileImported] = useState<boolean>(false);
 
-    const fileInput = useRef();
+    const fileInput = createRef<HTMLInputElement>();
 
     const fetchData = useCallback(() => {
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
@@ -43,13 +54,13 @@ function App(this: unknown) {
         setGrade(parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString()));
     }
 
-    const handleFileUpload = useCallback((e: any) => {
+    const handleFileUpload = useCallback((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const file = e.target.files[0];
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
             delimiter: ",",
-            complete: (results: object) => {
+            complete: (results: any) => {  // eslint-disable-line @typescript-eslint/no-explicit-any
                 console.log(results);
                 console.log(typeof results);
                 setImportData(results.data);
@@ -66,7 +77,7 @@ function App(this: unknown) {
             const grade11Classes: string[] = [];
             const grade12Classes: string[] = [];
         
-            for (let row of importData) {
+            for (const row of importData) {
                 if (row["Grade 9"] != "") {
                     grade9Classes.push(row["Grade 9"]);
                 }
@@ -134,7 +145,7 @@ function App(this: unknown) {
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
                 </button>
-                <button className='btn' onClick={()=>fileInput.current.click()}>
+                <button className='btn' onClick={()=>fileInput?.current?.click()}>
                     <ArrowDownTrayIcon className='h-6 w-6' />
                     <span>Import</span>
                 </button>

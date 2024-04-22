@@ -98,10 +98,6 @@ def import_csv_data():
     grade_10_classes = class_lists["grade10Classes"]
     grade_11_classes = class_lists["grade11Classes"]
     grade_12_classes = class_lists["grade12Classes"]
-    print(grade_9_classes)
-    print(grade_10_classes)
-    print(grade_11_classes)
-    print(grade_12_classes)
     return ""
 
 if __name__ == "__main__":
