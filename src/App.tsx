@@ -102,10 +102,10 @@ function App(this: unknown) {
                 body: JSON.stringify({grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes})
             }).then();
         }
-    }, [importData]);
+    }, [importData, fileImported]);
 
     useEffect(() => fetchData(), [fetchData, grade]);
-    useEffect(() => sendFileData(), [importData, fileImported]);
+    useEffect(() => sendFileData(), [importData, fileImported, sendFileData]);
 
     return (
         <div className='flex flex-col m-auto'>
