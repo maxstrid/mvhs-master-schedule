@@ -15,7 +15,7 @@ grade_10_clases: list[str]  = []
 grade_11_classes: list[str] = []
 grade_12_classes: list[str] = []
 
-current_class_list = []
+current_class_list: list[str] = []
 
 class ConflictResponse:
 
