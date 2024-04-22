@@ -24,7 +24,7 @@ function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
-    const [importData, setImportData] = useState<any[]>([]);
+    const [importData, setImportData] = useState<string[]>([]);
     const [fileImported, setFileImported] = useState<boolean>(false);
 
     const fileInput = useRef();
@@ -43,7 +43,7 @@ function App(this: unknown) {
         setGrade(parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString()));
     }
 
-    const handleFileUpload = useCallback((e) => {
+    const handleFileUpload = useCallback((e: any) => {
         const file = e.target.files[0];
         Papa.parse(file, {
             header: true,
@@ -51,21 +51,22 @@ function App(this: unknown) {
             delimiter: ",",
             complete: (results: any) => {
                 console.log(results);
+                console.log(typeof results);
                 setImportData(results.data);
             }
         })
         setFileImported(true);
         
-    }, [importData]);
+    }, []);
     
     const sendFileData = useCallback(() => {
         if (fileImported == true) {
-            let grade9Classes: string[] = [];
-            let grade10Classes: string[] = [];
-            let grade11Classes: string[] = [];
-            let grade12Classes: string[] = [];
+            const grade9Classes: string[] = [];
+            const grade10Classes: string[] = [];
+            const grade11Classes: string[] = [];
+            const grade12Classes: string[] = [];
         
-            for (var row of importData) {
+            for (let row of importData) {
                 if (row["Grade 9"] != "") {
                     grade9Classes.push(row["Grade 9"]);
                 }
@@ -142,22 +143,7 @@ function App(this: unknown) {
                     <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
                 </button>
-                <h1>{importData.length ? importData[0]["Grade 9"] : null}</h1>
             </div>
-            {importData.length ? (
-                <table>
-                    <tbody>
-                        {importData.map((row, index) => (
-                            <tr key={index}>
-                                <td>{row["Grade 9"]}</td>
-                                <td>{row["Grade 10"]}</td>
-                                <td>{row["Grade 11"]}</td>
-                                <td>{row["Grade 12"]}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            ) : null}
         </div >
     );
 }
