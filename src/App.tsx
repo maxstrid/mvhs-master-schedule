@@ -24,7 +24,7 @@ function App(this: unknown) {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
-    const [importData, setImportData] = useState<any[]>([]);
+    const [importData, setImportData] = useState<string[]>([]);
     const [fileImported, setFileImported] = useState<boolean>(false);
 
     const fileInput = useRef();
@@ -49,21 +49,22 @@ function App(this: unknown) {
             header: true,
             skipEmptyLines: true,
             delimiter: ",",
-            complete: (results: any) => {
+            complete: (results: object) => {
                 console.log(results);
+                console.log(typeof results);
                 setImportData(results.data);
             }
         })
         setFileImported(true);
         
-    }, [importData]);
+    }, []);
     
     const sendFileData = useCallback(() => {
         if (fileImported == true) {
-            let grade9Classes: string[] = [];
-            let grade10Classes: string[] = [];
-            let grade11Classes: string[] = [];
-            let grade12Classes: string[] = [];
+            const grade9Classes: string[] = [];
+            const grade10Classes: string[] = [];
+            const grade11Classes: string[] = [];
+            const grade12Classes: string[] = [];
         
             for (var row of importData) {
                 if (row["Grade 9"] != "") {
