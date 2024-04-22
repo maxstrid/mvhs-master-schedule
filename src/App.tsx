@@ -53,18 +53,11 @@ function App(this: unknown) {
                 setImportData(results.data);
             }
         })
-        // fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
-        //     method: 'POST',
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify(periods[i].classes)
-        // }).then(res => res.json())
-        //     .then(currentPeriod =>
-        //         setClassConflicts(classConflicts => [...classConflicts, {
-        //             period: i,
-        //             total_conflicts: currentPeriod.conflicts,
-        //         }])
-        //     );
-        console.log(importData[0][0]);
+        fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(importData)
+        }).then();
     }, [importData]);
 
     useEffect(() => fetchData(), [fetchData, grade]);
@@ -116,8 +109,22 @@ function App(this: unknown) {
                     <ArrowUpTrayIcon className='h-6 w-6' />
                     <span>Export</span>
                 </button>
+                <h1>{importData.length ? importData[0]["Grade 9"] : null}</h1>
             </div>
-            <h1>{importData}</h1>
+            {importData.length ? (
+                <table>
+                    <tbody>
+                        {importData.map((row, index) => (
+                            <tr key={index}>
+                                <td>{row["Grade 9"]}</td>
+                                <td>{row["Grade 10"]}</td>
+                                <td>{row["Grade 11"]}</td>
+                                <td>{row["Grade 12"]}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : null}
         </div >
     );
 }
