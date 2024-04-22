@@ -80,13 +80,24 @@ def calc_period_conflicts(period: int):
 
     return response
 
-@app.route("/api/import_csv_data", methods=["POST"])
+@app.route("/api/import_csv_data", methods=["POST", "OPTIONS"])
 def import_csv_data():
-    csv_file = request.files['file']
-    print(csv_file)
-    parsed_csv_file = pd.read_csv(csv_file)
-    print(parsed_csv_file)
-    return ""
+    if request.method == "OPTIONS": # CORS preflight
+        response = jsonify("")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        return response
+    # csv_file = request.files['file']
+    # print(csv_file)
+    # parsed_csv_file = pd.read_csv(csv_file)
+    # print(parsed_csv_file)
+
+    imported_file = request.get_json()
+    print(imported_file)
+    response = ""
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -55,7 +55,7 @@ function App(this: unknown) {
         })
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
             method: 'POST',
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json"},
             body: JSON.stringify(importData)
         }).then();
     }, [importData]);
