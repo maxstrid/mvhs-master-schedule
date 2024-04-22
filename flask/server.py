@@ -10,10 +10,10 @@ ConflictResponseBody = dict[str, int]
 conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
 
-grade_9_classes = []
-grade_10_clases = []
-grade_11_classes = []
-grade_12_classes = []
+grade_9_classes: list(str) = []
+grade_10_clases: list(str)  = []
+grade_11_classes: list(str) = []
+grade_12_classes: list(str) = []
 
 current_class_list = []
 
