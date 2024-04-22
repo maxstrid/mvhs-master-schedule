@@ -49,7 +49,7 @@ function App(this: unknown) {
             header: true,
             skipEmptyLines: true,
             delimiter: ",",
-            complete: (results: any) => {
+            complete: (results: object) => {
                 console.log(results);
                 console.log(typeof results);
                 setImportData(results.data);
