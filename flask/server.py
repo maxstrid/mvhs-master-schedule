@@ -10,6 +10,11 @@ ConflictResponseBody = dict[str, int]
 conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
 
+grade_9_classes = []
+grade_10_clases = []
+grade_11_classes = []
+grade_12_classes = []
+
 current_class_list = []
 
 class ConflictResponse:
@@ -88,16 +93,16 @@ def import_csv_data():
         response.headers.add("Access-Control-Allow-Headers", "*")
         response.headers.add("Access-Control-Allow-Methods", "*")
         return response
-    # csv_file = request.files['file']
-    # print(csv_file)
-    # parsed_csv_file = pd.read_csv(csv_file)
-    # print(parsed_csv_file)
-
-    imported_file = request.get_json()
-    print(imported_file)
-    response = ""
-    response.headers.add("Access-Control-Allow-Origin", "*")
-    return response
+    class_lists = request.get_json()
+    grade_9_classes = class_lists["grade9Classes"]
+    grade_10_classes = class_lists["grade10Classes"]
+    grade_11_classes = class_lists["grade11Classes"]
+    grade_12_classes = class_lists["grade12Classes"]
+    print(grade_9_classes)
+    print(grade_10_classes)
+    print(grade_11_classes)
+    print(grade_12_classes)
+    return ""
 
 if __name__ == "__main__":
     app.run(debug=True)

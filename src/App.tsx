@@ -25,6 +25,7 @@ function App(this: unknown) {
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
     const [importData, setImportData] = useState<any[]>([]);
+    const [fileImported, setFileImported] = useState<boolean>(false);
 
     const fileInput = useRef();
 
@@ -53,14 +54,46 @@ function App(this: unknown) {
                 setImportData(results.data);
             }
         })
-        fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
-            method: 'POST',
-            headers: { "Content-Type": "application/json"},
-            body: JSON.stringify(importData)
-        }).then();
+        setFileImported(true);
+        
+    }, [importData]);
+    
+    const sendFileData = useCallback(() => {
+        if (fileImported == true) {
+            let grade9Classes: string[] = [];
+            let grade10Classes: string[] = [];
+            let grade11Classes: string[] = [];
+            let grade12Classes: string[] = [];
+        
+            for (var row of importData) {
+                if (row["Grade 9"] != "") {
+                    grade9Classes.push(row["Grade 9"]);
+                }
+                if (row["Grade 10"] != "") {
+                    grade10Classes.push(row["Grade 10"]);
+                }
+                if (row["Grade 11"] != "") {
+                    grade11Classes.push(row["Grade 11"]);
+                }
+                if (row["Grade 12"] != "") {
+                    grade12Classes.push(row["Grade 12"]);
+                }
+            }
+        
+            console.log(grade9Classes);
+            console.log(grade10Classes);
+            console.log(grade11Classes);
+            console.log(grade12Classes);
+            fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
+                method: 'POST',
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify({grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes})
+            }).then();
+        }
     }, [importData]);
 
     useEffect(() => fetchData(), [fetchData, grade]);
+    useEffect(() => sendFileData(), [importData, fileImported]);
 
     return (
         <div className='flex flex-col m-auto'>
