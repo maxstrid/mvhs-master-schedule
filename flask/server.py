@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import pandas as pd
 from conflict.conflict_calc import ConflictCalculator
 app = Flask(__name__)
 
@@ -8,6 +9,13 @@ ConflictResponseBody = dict[str, int]
 
 conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
+
+grade_9_classes: list[str] = []
+grade_10_clases: list[str]  = []
+grade_11_classes: list[str] = []
+grade_12_classes: list[str] = []
+
+current_class_list: list[str] = []
 
 class ConflictResponse:
 
@@ -76,6 +84,21 @@ def calc_period_conflicts(period: int):
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
+
+@app.route("/api/import_csv_data", methods=["POST", "OPTIONS"])
+def import_csv_data():
+    if request.method == "OPTIONS": # CORS preflight
+        response = jsonify("")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        return response
+    class_lists = request.get_json()
+    grade_9_classes = class_lists["grade9Classes"]
+    grade_10_classes = class_lists["grade10Classes"]
+    grade_11_classes = class_lists["grade11Classes"]
+    grade_12_classes = class_lists["grade12Classes"]
+    return ""
 
 if __name__ == "__main__":
     app.run(debug=True)
