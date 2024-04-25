@@ -107,10 +107,6 @@ def import_csv_data():
 @app.route("/api/change_current_grade/grade=<grade>", methods=["POST", "OPTIONS"])
 def change_current_grade(grade: int):
     global current_class_list
-    global grade_9_classes
-    global grade_10_classes
-    global grade_11_classes
-    global grade_12_classes
     if request.method == "OPTIONS": # CORS preflight
         response = jsonify("")
         response.headers.add("Access-Control-Allow-Origin", "*")
