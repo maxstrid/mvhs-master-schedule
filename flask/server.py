@@ -12,7 +12,7 @@ conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
 
 grade_9_classes: list[str] = []
-grade_10_clases: list[str]  = []
+grade_10_classes: list[str]  = []
 grade_11_classes: list[str] = []
 grade_12_classes: list[str] = []
 
@@ -87,6 +87,10 @@ def calc_period_conflicts(period: int):
 
 @app.route("/api/import_csv_data", methods=["POST", "OPTIONS"])
 def import_csv_data():
+    global grade_9_classes
+    global grade_10_classes
+    global grade_11_classes
+    global grade_12_classes
     if request.method == "OPTIONS": # CORS preflight
         response = jsonify("")
         response.headers.add("Access-Control-Allow-Origin", "*")
@@ -99,6 +103,31 @@ def import_csv_data():
     grade_11_classes = class_lists["grade11Classes"]
     grade_12_classes = class_lists["grade12Classes"]
     return ""
+
+@app.route("/api/change_current_grade/grade=<grade>", methods=["POST", "OPTIONS"])
+def change_current_grade(grade: int):
+    global current_class_list
+    global grade_9_classes
+    global grade_10_classes
+    global grade_11_classes
+    global grade_12_classes
+    if request.method == "OPTIONS": # CORS preflight
+        response = jsonify("")
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "*")
+        response.headers.add("Access-Control-Allow-Methods", "*")
+        return response
+    grade = int(grade)
+    if (grade == 9):
+        current_class_list = grade_9_classes
+    elif (grade == 10):
+        current_class_list = grade_10_classes
+    elif (grade == 11):
+        current_class_list = grade_11_classes
+    elif (grade == 12):
+        current_class_list = grade_12_classes
+    print(current_class_list)
+    return current_class_list
 
 if __name__ == "__main__":
     app.run(debug=True)

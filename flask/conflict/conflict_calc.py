@@ -60,7 +60,6 @@ class ConflictCalculator:
           row.append(currentCourseName)
           self.df.loc[len(self.df.index)] = row
 
-
       # adds number of conflicts for each class to the comparing class
       # creates a new filling row if conflicting class changes
       currentCourseName = self.df["conflictingCourseName"][0]
