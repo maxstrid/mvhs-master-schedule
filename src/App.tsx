@@ -57,7 +57,7 @@ function App(this: unknown) {
             method: 'POST',
             headers: { "Content-Type": "application/json"},
         }).then(res => res.json());
-    }, [grade]);
+    }, []);
 
     const handleFileUpload = useCallback((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const file = e.target.files[0];
