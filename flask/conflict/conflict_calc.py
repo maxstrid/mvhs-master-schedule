@@ -50,6 +50,15 @@ class ConflictCalculator:
           row.append(0)
           row.append(currentCourseName)
           self.df.loc[len(self.df.index)] = row
+        elif len(row) == 3 and row[-1].isdigit():
+          row.append("")
+          row.append("")
+          row.append(0)
+          row.append("")
+          row.append("")
+          row.append(0)
+          row.append(currentCourseName)
+          self.df.loc[len(self.df.index)] = row
 
       # adds number of conflicts for each class to the comparing class
       # creates a new filling row if conflicting class changes

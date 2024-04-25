@@ -48,11 +48,16 @@ function App(this: unknown) {
         setDataCounter(prevDataCounter => prevDataCounter + 1);
     }, [grade]);
 
-    function switchGrade(e: React.FormEvent<HTMLFormElement>) {
+    const switchGrade = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget!);
         setGrade(parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString()));
-    }
+        const newGrade: number = parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString());
+        fetch(import.meta.env.VITE_BACKEND_URL + "/api/change_current_grade/grade="+newGrade, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json"},
+        }).then(res => res.json());
+    }, [grade]);
 
     const handleFileUpload = useCallback((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
         const file = e.target.files[0];
