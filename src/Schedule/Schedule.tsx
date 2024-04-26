@@ -22,14 +22,21 @@ type ClassConflict = {
     total_conflicts: number,
 }
 
+type SwapAction = {
+    first: ClassId,
+    second: ClassId
+}
+
 export function Schedule(props: ScheduleProps) {
     const [highlightedClasses, setHighlightedClasses] = useState<ClassId[]>([]);
     const [periods, setPeriods] = useState<SchedulePeriod[]>(props.periods);
     const [classConflicts, setClassConflicts] = useState<ClassConflict[]>([]);
     const [swapCounter, setSwapCounter] = useState<number>(0);
+    const [outlinedClasses, setOutlinedClasses] = useState<ClassId[]>([]);
+    const [actionList, setActionList] = useState<SwapAction[]>([]);
+    const [undoIndex, setUndoIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        console.log("Updating")
         setClassConflicts([])
         for (let i = 0; i < periods.length; i++) {
             fetch(import.meta.env.VITE_BACKEND_URL + "/api/calc_period_conflicts/period=" + i, {
@@ -50,21 +57,27 @@ export function Schedule(props: ScheduleProps) {
         return highlightedClasses.some(element => element.i == id.i && element.j == id.j);
     }, [highlightedClasses]);
 
-    const swapClasses = useCallback(() => {
+    const outlinedClassesContains = useCallback((id: ClassId) => {
+        return outlinedClasses.some(element => element.i == id.i && element.j == id.j);
+    }, [outlinedClasses]);
+
+    const swapClasses = useCallback((class_one: ClassId, class_two: ClassId) => {
+        setOutlinedClasses([class_one, class_two]);
+
         setPeriods(prevPeriods => prevPeriods.map((period: SchedulePeriod, i: number) => {
             return {
                 period: period.period,
                 classes: period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
-                    let index: number | null = null;
+                    let class_id: ClassId | null = null;
 
-                    if (i == highlightedClasses[0].i && j == highlightedClasses[0].j) {
-                        index = 1;
-                    } else if (i == highlightedClasses[1].i && j == highlightedClasses[1].j) {
-                        index = 0;
+                    if (i == class_one.i && j == class_one.j) {
+                        class_id = class_two;
+                    } else if (i == class_two.i && j == class_two.j) {
+                        class_id = class_one;
                     }
 
-                    const new_schedule_class = (index != null) ?
-                        prevPeriods[highlightedClasses[index].i].classes[highlightedClasses[index].j] : schedule_class;
+                    const new_schedule_class = (class_id != null) ?
+                        prevPeriods[class_id.i].classes[class_id.j] : schedule_class;
 
                     return {
                         name: new_schedule_class.name,
@@ -73,12 +86,67 @@ export function Schedule(props: ScheduleProps) {
                 }),
             }
         }));
+    }, []);
+
+    const redo = useCallback(() => {
+        if (undoIndex == null) {
+            return;
+        }
+
+        if (undoIndex == actionList.length) {
+            return;
+        }
+
+        const actionItem = actionList.at(undoIndex)!;
+
+        swapClasses(actionItem.first, actionItem.second);
+
+        setUndoIndex(undoIndex => undoIndex! + 1);
+    }, [undoIndex, actionList, swapClasses]);
+
+    const undo = useCallback(() => {
+        let newUndoIndex = undoIndex;
+
+        if (newUndoIndex == null) {
+            newUndoIndex = actionList.length - 1;
+        } else {
+            newUndoIndex = undoIndex! - 1;
+        }
+
+        console.log(actionList.length, actionList, newUndoIndex);
+
+        if (newUndoIndex < 0) {
+            setUndoIndex(0);
+            return;
+        }
+
+        const actionItem = actionList.at(newUndoIndex)!;
+
+        swapClasses(actionItem.first, actionItem.second);
+
+        setUndoIndex(newUndoIndex);
+    }, [undoIndex, actionList, swapClasses]);
+
+    const swapHighlightedClasses = useCallback(() => {
+        swapClasses(highlightedClasses[0], highlightedClasses[1]);
 
         setHighlightedClasses([]);
 
+        setActionList((action_list: SwapAction[]) => {
+            let new_action_list = undoIndex != null ? action_list.slice(0, undoIndex!) : action_list;
+
+            new_action_list.push({
+                first: highlightedClasses[0],
+                second: highlightedClasses[1]
+            })
+
+            return new_action_list;
+        });
+
+        setUndoIndex(null);
 
         setSwapCounter(swapCounter => swapCounter + 1);
-    }, [highlightedClasses]);
+    }, [highlightedClasses, setActionList, undoIndex, swapClasses]);
 
     const toggleClass = useCallback((id: ClassId) => {
         if (highlightedClasses.length > 1 && !classesContains(id)) {
@@ -94,6 +162,18 @@ export function Schedule(props: ScheduleProps) {
         }
 
     }, [highlightedClasses, classesContains]);
+
+    const onKeyPressHandler = useCallback((e: KeyboardEvent) => {
+        if (e.key == 'z' && e.ctrlKey) {
+            undo()
+        }
+
+        if (e.key == 'z' && e.ctrlKey && e.shiftKey) {
+            redo()
+        }
+    }, [undo, redo]);
+
+    document.onkeydown = onKeyPressHandler;
 
     return (
         <div className='m-auto flex flex-col'>
@@ -115,7 +195,7 @@ export function Schedule(props: ScheduleProps) {
                                     <div key={swapCounter + i + j}>
                                         <button
                                             className={`p-1 border-2 border-transparent mt-1 mb-1 ${classesContains(id) ?
-                                                'bg-yellow-300' : 'bg-gray-300'}  rounded-md w-full`}
+                                                'bg-yellow-300' : outlinedClassesContains(id) ? 'border-yellow-300' : 'bg-gray-300'}  rounded-md w-full`}
                                             onClick={() => { toggleClass(id) }}
                                         >
                                             {schedule_class.name}
@@ -130,7 +210,7 @@ export function Schedule(props: ScheduleProps) {
             </div>
             {
                 (highlightedClasses.length > 1) ?
-                    <button className='btn m-auto justify-center pr-4 pl-4' onClick={swapClasses}>Swap</button>
+                    <button className='btn m-auto justify-center pr-4 pl-4' onClick={swapHighlightedClasses}>Swap</button>
                     :
                     <></>
             }
