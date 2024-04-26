@@ -113,10 +113,8 @@ export function Schedule(props: ScheduleProps) {
             newUndoIndex = undoIndex! - 1;
         }
 
-        console.log(actionList.length, actionList, newUndoIndex);
-
         if (newUndoIndex < 0) {
-            setUndoIndex(0);
+            setUndoIndex(-1);
             return;
         }
 
@@ -133,7 +131,7 @@ export function Schedule(props: ScheduleProps) {
         setHighlightedClasses([]);
 
         setActionList((action_list: SwapAction[]) => {
-            let new_action_list = undoIndex != null ? action_list.slice(0, undoIndex!) : action_list;
+            const new_action_list = undoIndex != null ? action_list.slice(0, undoIndex!) : action_list;
 
             new_action_list.push({
                 first: highlightedClasses[0],
@@ -164,12 +162,10 @@ export function Schedule(props: ScheduleProps) {
     }, [highlightedClasses, classesContains]);
 
     const onKeyPressHandler = useCallback((e: KeyboardEvent) => {
-        if (e.key == 'z' && e.ctrlKey) {
-            undo()
-        }
-
-        if (e.key == 'z' && e.ctrlKey && e.shiftKey) {
+        if (e.key == 'y' && e.ctrlKey) {
             redo()
+        } else if (e.key == 'z' && e.ctrlKey) {
+            undo()
         }
     }, [undo, redo]);
 
@@ -210,7 +206,7 @@ export function Schedule(props: ScheduleProps) {
             </div>
             {
                 (highlightedClasses.length > 1) ?
-                    <button className='btn m-auto justify-center pr-4 pl-4' onClick={swapHighlightedClasses}>Swap</button>
+                    <button className='btn absolute top-0 right-0 justify-center pr-4 pl-4' onClick={swapHighlightedClasses}>Swap</button>
                     :
                     <></>
             }
