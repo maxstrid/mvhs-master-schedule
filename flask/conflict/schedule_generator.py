@@ -1,6 +1,7 @@
 from conflict.conflict_calc import ConflictCalculator
 
 Schedule = dict[int, set[str]];
+Classlist = dict[str, dict[str, int]];
 
 class Graph:
     def __init__(self) -> None:
@@ -61,11 +62,12 @@ def create_graph(classes: dict[str, dict[str, int]]) -> Graph:
     return class_graph
 
 class ScheduleGenerator:
-    def __init__(self, calculator: ConflictCalculator):
+    def __init__(self, calculator: ConflictCalculator, course_list: Classlist):
         self.calculator = calculator
+        self.course_list = course_list
 
     def gen_schedule(self) -> Schedule:
-        schedule_graph: Graph = self.__build_graph(self.calculator.course_list)
+        schedule_graph: Graph = self.__build_graph(self.course_list)
 
         # We define this here so we can call it more than once.
         def build_schedule() -> Schedule:
@@ -140,7 +142,7 @@ class ScheduleGenerator:
         
         return total_conflicts
     
-    def __build_graph(self, classes: dict[str, dict[str, int]]) -> Graph:
+    def __build_graph(self, classes: Classlist) -> Graph:
         class_graph = Graph()
 
         for node, conflicts in classes.items():
