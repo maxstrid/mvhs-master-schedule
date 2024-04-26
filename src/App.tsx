@@ -52,11 +52,6 @@ function App(this: unknown) {
         e.preventDefault();
         const formData = new FormData(e.currentTarget!);
         setGrade(parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString()));
-        const newGrade: number = parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString());
-        fetch(import.meta.env.VITE_BACKEND_URL + "/api/change_current_grade/grade="+newGrade, {
-            method: 'POST',
-            headers: { "Content-Type": "application/json"},
-        }).then(res => res.json());
     }, []);
 
     const handleFileUpload = useCallback((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -72,16 +67,16 @@ function App(this: unknown) {
             }
         })
         setFileImported(true);
-        
+
     }, []);
-    
+
     const sendFileData = useCallback(() => {
         if (fileImported == true) {
             const grade9Classes: string[] = [];
             const grade10Classes: string[] = [];
             const grade11Classes: string[] = [];
             const grade12Classes: string[] = [];
-        
+
             for (const row of importData) {
                 if (row["Grade 9"] != "") {
                     grade9Classes.push(row["Grade 9"]);
@@ -96,15 +91,15 @@ function App(this: unknown) {
                     grade12Classes.push(row["Grade 12"]);
                 }
             }
-        
+
             console.log(grade9Classes);
             console.log(grade10Classes);
             console.log(grade11Classes);
             console.log(grade12Classes);
             fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
                 method: 'POST',
-                headers: { "Content-Type": "application/json"},
-                body: JSON.stringify({grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes})
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes })
             }).then();
         }
     }, [importData, fileImported]);
@@ -150,7 +145,7 @@ function App(this: unknown) {
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
                 </button>
-                <button className='btn' onClick={()=>fileInput?.current?.click()}>
+                <button className='btn' onClick={() => fileInput?.current?.click()}>
                     <ArrowDownTrayIcon className='h-6 w-6' />
                     <span>Import</span>
                 </button>

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 import pandas as pd
 from conflict.conflict_calc import ConflictCalculator
-from conflict.schedule_generator import ScheduleGenerator
+from conflict.schedule_generator import ScheduleGenerator, Classlist 
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
@@ -11,12 +11,7 @@ ConflictResponseBody = dict[str, int]
 conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
 
-grade_9_classes: list[str] = []
-grade_10_classes: list[str]  = []
-grade_11_classes: list[str] = []
-grade_12_classes: list[str] = []
-
-current_class_list: list[str] = []
+grade_classes: dict[int, Classlist]  = {}
 
 class ConflictResponse:
 
@@ -50,9 +45,11 @@ class ScheduleResponse:
 
 @app.route("/api/generate_schedule/grade=<grade>", methods=["GET"])
 def generate_schedule(grade: int):
+    grade = int(grade)
+
     scheduleRes = ScheduleResponse(grade)
 
-    generator = ScheduleGenerator(conflict_calculator)
+    generator = ScheduleGenerator(conflict_calculator, grade_classes[grade])
 
     schedule = generator.gen_schedule()
 
@@ -87,10 +84,8 @@ def calc_period_conflicts(period: int):
 
 @app.route("/api/import_csv_data", methods=["POST", "OPTIONS"])
 def import_csv_data():
-    global grade_9_classes
-    global grade_10_classes
-    global grade_11_classes
-    global grade_12_classes
+    global grade_classes
+
     if request.method == "OPTIONS": # CORS preflight
         response = jsonify("")
         response.headers.add("Access-Control-Allow-Origin", "*")
@@ -98,32 +93,23 @@ def import_csv_data():
         response.headers.add("Access-Control-Allow-Methods", "*")
         return response
     class_lists = request.get_json()
-    grade_9_classes = class_lists["grade9Classes"]
-    grade_10_classes = class_lists["grade10Classes"]
-    grade_11_classes = class_lists["grade11Classes"]
-    grade_12_classes = class_lists["grade12Classes"]
-    return ""
 
-@app.route("/api/change_current_grade/grade=<grade>", methods=["POST", "OPTIONS"])
-def change_current_grade(grade: int):
-    global current_class_list
-    if request.method == "OPTIONS": # CORS preflight
-        response = jsonify("")
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Headers", "*")
-        response.headers.add("Access-Control-Allow-Methods", "*")
-        return response
-    grade = int(grade)
-    if (grade == 9):
-        current_class_list = grade_9_classes
-    elif (grade == 10):
-        current_class_list = grade_10_classes
-    elif (grade == 11):
-        current_class_list = grade_11_classes
-    elif (grade == 12):
-        current_class_list = grade_12_classes
-    print(current_class_list)
-    return current_class_list
+    classes = {
+        9: class_lists["grade9Classes"],
+        10: class_lists["grade10Classes"],
+        11: class_lists["grade11Classes"],
+        12: class_lists["grade12Classes"],
+    }
+
+    for period, schedule in classes.items():
+        period_classlist: Classlist = {} 
+
+        for schedule_class in schedule:
+            period_classlist[schedule_class.strip()] = conflict_calculator.course_list[schedule_class.strip()]
+
+        grade_classes.update({period: period_classlist})
+
+    return ""
 
 if __name__ == "__main__":
     app.run(debug=True)
