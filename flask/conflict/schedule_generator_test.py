@@ -9,10 +9,11 @@ class TestScheduleGenerator(unittest.TestCase):
         calculator = ConflictCalculator()
         calculator.parseFile()
 
-        generator = ScheduleGenerator(calculator)
+        generator = ScheduleGenerator(calculator, calculator.course_list)
 
         schedule = generator.gen_schedule()
 
+        #TODO(max): make this actually verify total conflicts are reasonable
         for period in schedule.values():
             print(period, calculator.calcPeriodConflicts(list(period)))
 
