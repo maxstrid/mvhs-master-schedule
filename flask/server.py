@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 import pandas as pd
 from conflict.conflict_calc import ConflictCalculator
+from conflict.schedule_generator import ScheduleGenerator
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
@@ -51,13 +52,12 @@ class ScheduleResponse:
 def generate_schedule(grade: int):
     scheduleRes = ScheduleResponse(grade)
 
-    scheduleRes.add_classes(1, ["Geometry", "AP Comp Sci A", "Digital Art Img", "Adv Comp Sci", "AP Calc BC", "American Lit H"])
-    scheduleRes.add_classes(2, ["Geometry", "AP Comp Sci A", "Digital Art Img", "Adv Comp Sci", "AP Calc BC", "American Lit H"])
-    scheduleRes.add_classes(3, ["Geometry", "AP Comp Sci A", "Digital Art Img", "Adv Comp Sci", "AP Calc BC", "American Lit H"])
-    scheduleRes.add_classes(4, ["Geometry", "AP Comp Sci A", "Digital Art Img", "Adv Comp Sci", "AP Calc BC", "American Lit H"])
-    scheduleRes.add_classes(5, ["Geometry", "AP Comp Sci A", "Digital Art Img", "Adv Comp Sci", "AP Calc BC", "American Lit H"])
-    scheduleRes.add_classes(6, ["Geometry", "AP Comp Sci A", "Digital Art Img", "Adv Comp Sci", "AP Calc BC", "American Lit H"])
-    scheduleRes.add_classes(7, ["Geometry", "AP Comp Sci A", "Digital Art Img", "Adv Comp Sci", "AP Calc BC", "American Lit H"])
+    generator = ScheduleGenerator(conflict_calculator)
+
+    schedule = generator.gen_schedule()
+
+    for period, classes in schedule.items():
+        scheduleRes.add_classes(period + 1, list(classes))
 
     response = jsonify(scheduleRes.get_response())
     response.headers.add('Access-Control-Allow-Origin', '*')

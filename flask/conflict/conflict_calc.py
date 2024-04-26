@@ -50,6 +50,16 @@ class ConflictCalculator:
           row.append(0)
           row.append(currentCourseName)
           self.df.loc[len(self.df.index)] = row
+        elif len(row) == 3 and row[-1].isdigit():
+          row.append("")
+          row.append("")
+          row.append(0)
+          row.append("")
+          row.append("")
+          row.append(0)
+          row.append(currentCourseName)
+          self.df.loc[len(self.df.index)] = row
+
 
       # adds number of conflicts for each class to the comparing class
       # creates a new filling row if conflicting class changes
@@ -63,6 +73,8 @@ class ConflictCalculator:
         fillingRow[self.df["courseName2"][row]] = self.df["courseRequests2"][row]
         fillingRow[self.df["courseName3"][row]] = self.df["courseRequests3"][row]
         self.course_list[self.df["conflictingCourseName"][row]] = fillingRow
+
+    print("File Parsed")
   
   def get_number(self, Tclass: str, Cclass:str):
     if (Tclass == Cclass):
