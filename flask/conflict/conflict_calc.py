@@ -1,6 +1,9 @@
 import pandas as pd
 import os
 
+CourseList = dict[str, dict[str, int]]
+CourseMap = dict[str, str]
+
 # fixes issues with relative paths and running file from different locations
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'conflict_matrix.txt')
@@ -21,12 +24,14 @@ class ConflictCalculator:
     self.df["conflictingCourseName"] = ""
 
     # creates map containing class and its corresponding conflicts with each class
-    self.course_list = {}
+    self.course_list: CourseList = {}
+
+    self.course_map: CourseMap = {}
   
   def parseFile(self):
     with open(filename, 'r') as file:
       counter = 0
-      currentCourseName = ""
+      current_course_id = ""
       for line in file:
         # skips first two uneeded rows
         if counter <= 1:
@@ -37,41 +42,27 @@ class ConflictCalculator:
         # sorts the values into the data frame
         # if row only contains two comparing classes, blank placeholder values
         # adds comparing class to the last column
+
+        # This is a title line, skip
+        if "Crs#" in line or "Course Conflict Matrix" in line:
+            continue
+
         row = line.strip().split(",")
         if (len(row) == 2):
-          if (row[1] != currentCourseName):
-            currentCourseName = row[1]
-        if (len(row) == 9):
-          row.append(currentCourseName)
-          self.df.loc[len(self.df.index)] = row
-        elif len(row) == 6:
-          row.append("")
-          row.append("")
-          row.append(0)
-          row.append(currentCourseName)
-          self.df.loc[len(self.df.index)] = row
-        elif len(row) == 3 and row[-1].isdigit():
-          row.append("")
-          row.append("")
-          row.append(0)
-          row.append("")
-          row.append("")
-          row.append(0)
-          row.append(currentCourseName)
-          self.df.loc[len(self.df.index)] = row
+          current_course_id = row[0].strip()
+          if row[1].strip() not in self.course_map:
+            self.course_map[current_course_id] = row[1].strip()
+          continue
 
-      # adds number of conflicts for each class to the comparing class
-      # creates a new filling row if conflicting class changes
-      currentCourseName = self.df["conflictingCourseName"][0]
-      fillingRow = {}
-      for row in self.df.index:
-        if (self.df["conflictingCourseName"][row] != currentCourseName):
-          fillingRow = {}
-          currentCourseName = self.df["conflictingCourseName"][row]
-        fillingRow[self.df["courseName1"][row]] = self.df["courseRequests1"][row]
-        fillingRow[self.df["courseName2"][row]] = self.df["courseRequests2"][row]
-        fillingRow[self.df["courseName3"][row]] = self.df["courseRequests3"][row]
-        self.course_list[self.df["conflictingCourseName"][row]] = fillingRow
+        chunks = [row[x:x+3] for x in range(0, len(row), 3)]
+
+        for chunk in chunks:
+          if current_course_id not in self.course_list:
+            self.course_list[current_course_id] = {}
+
+          conflicting_course = chunk[0].strip()
+
+          self.course_list[current_course_id][conflicting_course] = int(chunk[2])
 
     print("File Parsed")
   
@@ -81,6 +72,14 @@ class ConflictCalculator:
     elif (self.course_list[Tclass][Cclass] != None):
       return self.course_list[Tclass][Cclass]
   
+  # WARNING: this can fail
+  def course_id(self, name: str) -> str:
+    inv_map = dict(zip(self.course_map.values(), self.course_map.keys()))
+    return inv_map[name]
+
+  def named_list(self, period: list[str]) -> list[tuple[str, str]]:
+    return list(map(lambda x: (x, self.course_map[x]), period))
+
   def calcPeriodConflicts(self, period: list):
     conflict_number = 0
     for i in range(len(period)):
@@ -89,12 +88,3 @@ class ConflictCalculator:
                 continue
             conflict_number += int(self.course_list[period[i]][period[j]])
     return conflict_number
-
-if __name__ == "__main__":
-  main = ConflictCalculator()
-  main.parseFile()
-  # mock data
-  print(main.course_list)
-  print(main.calcPeriodConflicts(["AP Calc BC", "Adv Comp Sci", "AP Physics I", "AP Chem", "AP Calc BC", "American Lit H"]))
-  assert main.calcPeriodConflicts(['AP Calc BC', 'AVID Tutor', 'AP Stat']) == 51
-  print("Testing data is calculated correctly")

@@ -15,7 +15,7 @@ class TestScheduleGenerator(unittest.TestCase):
 
         #TODO(max): make this actually verify total conflicts are reasonable
         for period in schedule.values():
-            print(period, calculator.calcPeriodConflicts(list(period)))
+            print(calculator.named_list(list(period)), calculator.calcPeriodConflicts(list(period)))
 
 if __name__ == '__main__':
     unittest.main()
