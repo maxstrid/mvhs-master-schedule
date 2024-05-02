@@ -9,7 +9,7 @@ import Papa from 'papaparse';
 
 type SchedulePeriodResponse = {
     period: number;
-    classes: string[];
+    classes: string[][];
 }
 
 type ScheduleResponse = {
@@ -43,7 +43,10 @@ function App(this: unknown) {
     const fetchData = useCallback(() => {
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
             .then(res => res.json())
-            .then(data => setData(data));
+            .then(data => {
+                console.log(data);
+                setData(data)
+            });
 
         setDataCounter(prevDataCounter => prevDataCounter + 1);
     }, [grade]);
@@ -130,10 +133,10 @@ function App(this: unknown) {
                     <Schedule periods={data.body.schedule.map((element: SchedulePeriodResponse): SchedulePeriod => {
                         return {
                             period: element.period,
-                            classes: element.classes.map((className: string) => ({
-                                name: className,
+                            classes: element.classes.map((className: string[]) => ({
+                                name: className[1],
                                 // TOOD(max): Make this use a classid returned from the api
-                                id: className,
+                                id: className[0],
                             })),
                         };
                     })} key={dataCounter} />
