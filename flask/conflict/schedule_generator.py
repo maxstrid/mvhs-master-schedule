@@ -4,6 +4,7 @@ Schedule = dict[int, set[str]]
 Classlist = dict[str, dict[str, int]]
 
 
+# graph data structure to represent all classes and conflicts
 class Graph:
 
     def __init__(self) -> None:
@@ -44,7 +45,7 @@ class Graph:
 
         return buffer
 
-
+# adds of the classes and conflicts as nodes and edges to a graph
 def create_graph(classes: dict[str, dict[str, int]]) -> Graph:
     class_graph = Graph()
 
@@ -139,6 +140,7 @@ class ScheduleGenerator:
 
         return best_schedule
 
+    # calculates all of the conflicts in every period
     def __calc_total_conflicts(self, schedule: Schedule) -> int:
         total_conflicts = 0
 
@@ -148,9 +150,12 @@ class ScheduleGenerator:
 
         return total_conflicts
 
+    # builds graph from classlist
     def __build_graph(self, classes: Classlist) -> Graph:
         class_graph = Graph()
 
+        # iterates through classes and adds them as nodes
+        # then adds the conflicts as edges between them
         for node, conflicts in classes.items():
             if not class_graph.contains(node):
                 class_graph.add(node.strip())
