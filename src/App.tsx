@@ -1,9 +1,9 @@
-import { useState, useCallback, useEffect, createRef } from 'react';
+import { useState, useCallback, useEffect, createRef, ChangeEvent } from 'react';
 
 import './App.css';
 
 import { Schedule, SchedulePeriod } from './Schedule';
-import { ArrowDownTrayIcon, ArrowPathIcon, ArrowUpTrayIcon } from '@heroicons/react/20/solid';
+import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/20/solid';
 
 import Papa from 'papaparse';
 
@@ -57,8 +57,8 @@ function App(this: unknown) {
         setGrade(parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString()));
     }, []);
 
-    const handleFileUpload = useCallback((e: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-        const file = e.target.files[0];
+    const handleFileUpload = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+        const file = (e.target as HTMLInputElement).files![0];
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
@@ -153,10 +153,6 @@ function App(this: unknown) {
                     <span>Import</span>
                 </button>
                 <input ref={fileInput} type="file" accept=".csv" onChange={handleFileUpload} hidden></input>
-                <button className='btn'>
-                    <ArrowUpTrayIcon className='h-6 w-6' />
-                    <span>Export</span>
-                </button>
             </div>
         </div >
     );

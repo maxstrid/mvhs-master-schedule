@@ -1,5 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 
+import { CSVLink } from "react-csv";
+
+import { ArrowUpTrayIcon } from '@heroicons/react/20/solid';
+
 export type SchedulePeriod = {
     period: number;
     classes: {
@@ -26,6 +30,16 @@ type SwapAction = {
     first: ClassId,
     second: ClassId
 }
+
+type ScheduleExportPeriodIds = {
+    period1ClassIds: string;
+    period2ClassIds: string;
+    period3ClassIds: string;
+    period4ClassIds: string;
+    period5ClassIds: string;
+    period6ClassIds: string;
+    period7ClassIds: string;
+};
 
 export function Schedule(props: ScheduleProps) {
     const [highlightedClasses, setHighlightedClasses] = useState<ClassId[]>([]);
@@ -169,6 +183,38 @@ export function Schedule(props: ScheduleProps) {
         }
     }, [undo, redo]);
 
+    const exportSchedule = useCallback(() => {
+        let scheduleRows: ScheduleExportPeriodIds[] = [];
+        let highestLength: number = 0;
+        periods.forEach((value) => {
+            if (value["classes"].length > highestLength) {
+                highestLength = value["classes"].length;
+            }
+        });
+
+        for (let i = 0; i < highestLength; i++) {
+            scheduleRows.push({
+                period1ClassIds: periods[0]["classes"][i]["id"] ? periods[0]["classes"][i]["id"] : "",
+                period2ClassIds: periods[1]["classes"][i]["id"] ? periods[1]["classes"][i]["id"] : "",
+                period3ClassIds: periods[2]["classes"][i]["id"] ? periods[2]["classes"][i]["id"] : "",
+                period4ClassIds: periods[3]["classes"][i]["id"] ? periods[3]["classes"][i]["id"] : "",
+                period5ClassIds: periods[4]["classes"][i]["id"] ? periods[4]["classes"][i]["id"] : "",
+                period6ClassIds: periods[5]["classes"][i]["id"] ? periods[5]["classes"][i]["id"] : "",
+                period7ClassIds: periods[6]["classes"][i]["id"] ? periods[6]["classes"][i]["id"] : "",
+            })
+        }
+
+        console.log(scheduleRows);
+
+        const csvContent = "data:text/csv;charset=utf-8," + scheduleRows.map(item => Object.values(item).join(',')).join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "data.csv");
+        document.body.appendChild(link); // Required for Firefox
+        link.click();
+    }, []);
+
     document.onkeydown = onKeyPressHandler;
 
     return (
@@ -210,6 +256,10 @@ export function Schedule(props: ScheduleProps) {
                     :
                     <></>
             }
+            <button className='btn h-10 w-40 justify-center self-center' onClick={exportSchedule}>
+                <ArrowUpTrayIcon className='h-6 w-6' />
+                <span>Export</span>
+            </button>
         </div >
 
     )
