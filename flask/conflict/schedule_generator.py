@@ -1,25 +1,27 @@
 from conflict.conflict_calc import ConflictCalculator
 
-Schedule = dict[int, set[str]];
-Classlist = dict[str, dict[str, int]];
+Schedule = dict[int, set[str]]
+Classlist = dict[str, dict[str, int]]
+
 
 class Graph:
+
     def __init__(self) -> None:
         self.graph: dict[str, set[tuple[str, int]]] = {}
 
     def add(self, node: str) -> None:
-        self.graph[node] = set();
+        self.graph[node] = set()
 
     def add_edge(self, node_a: str, node_b: str, weight: int) -> None:
         if (node_a not in self.graph or node_b not in self.graph):
             pass
-        
+
         self.graph[node_a].add((node_b, int(weight)))
         self.graph[node_b].add((node_a, int(weight)))
-    
+
     def get(self, node: str) -> set[tuple[str, int]]:
         return self.graph[node]
-    
+
     def contains(self, node: str):
         return node in self.graph
 
@@ -42,6 +44,7 @@ class Graph:
 
         return buffer
 
+
 def create_graph(classes: dict[str, dict[str, int]]) -> Graph:
     class_graph = Graph()
 
@@ -57,11 +60,12 @@ def create_graph(classes: dict[str, dict[str, int]]) -> Graph:
                 continue
 
             class_graph.add_edge(node.strip(), edge.strip(), conflict_num)
-            
 
     return class_graph
 
+
 class ScheduleGenerator:
+
     def __init__(self, calculator: ConflictCalculator, course_list: Classlist):
         self.calculator = calculator
         self.course_list = course_list
@@ -72,13 +76,13 @@ class ScheduleGenerator:
         # We define this here so we can call it more than once.
         def build_schedule() -> Schedule:
             schedule: Schedule = {}
-            
+
             seen_classes: set[str] = set()
 
             for node in schedule_graph:
                 sorted_classes = list(schedule_graph.get(node))
                 # Orders the classses by ones with the most conflicts
-                sorted_classes.sort(key = lambda x: x[1], reverse = True)
+                sorted_classes.sort(key=lambda x: x[1], reverse=True)
 
                 # We iterate through each class and assign it to a class if it hasn't been assigned
                 # This tries to make sure classes with the highest conflicts are assigned to different periods
@@ -101,7 +105,8 @@ class ScheduleGenerator:
 
                         schedule[i].add(item[0])
 
-                        conflicts = self.calculator.calcPeriodConflicts(list(schedule[i]))
+                        conflicts = self.calculator.calculate_period_conflicts(
+                            list(schedule[i]))
 
                         if conflicts < lowest_conflict_num:
                             lowest_conflict_period = i
@@ -120,7 +125,7 @@ class ScheduleGenerator:
 
         best_schedule: Schedule = build_schedule()
         best_total_conflicts = self.__calc_total_conflicts(best_schedule)
-        
+
         # We're going to try 10 schedules and see which one is the best.
         # TOOD(max): This could be done way better, this method is pretty much guess and check.
         for _ in range(0, 10):
@@ -131,17 +136,18 @@ class ScheduleGenerator:
             if (total_conflicts < best_total_conflicts):
                 best_total_conflicts = total_conflicts
                 best_schedule = schedule
-        
+
         return best_schedule
 
     def __calc_total_conflicts(self, schedule: Schedule) -> int:
         total_conflicts = 0
 
         for period in schedule.values():
-            total_conflicts += self.calculator.calcPeriodConflicts(list(period))
-        
+            total_conflicts += self.calculator.calculate_period_conflicts(
+                list(period))
+
         return total_conflicts
-    
+
     def __build_graph(self, classes: Classlist) -> Graph:
         class_graph = Graph()
 
@@ -157,7 +163,6 @@ class ScheduleGenerator:
                     continue
 
                 class_graph.add_edge(node.strip(), edge.strip(), conflict_num)
-                
 
         return class_graph
 
@@ -170,7 +175,7 @@ def assign_classes(graph: Graph, calculator: ConflictCalculator):
     for node in graph:
         sorted_classes = list(graph.get(node))
         # Orders the classses by ones with the most conflicts
-        sorted_classes.sort(key = lambda x: x[1], reverse = True)
+        sorted_classes.sort(key=lambda x: x[1], reverse=True)
 
         # We iterate through each class and assign it to a class if it hasn't been assigned
         # This tries to make sure classes with the highest conflicts are assigned to different periods
@@ -193,7 +198,8 @@ def assign_classes(graph: Graph, calculator: ConflictCalculator):
 
                 schedule[i].add(item[0])
 
-                conflicts = calculator.calcPeriodConflicts(list(schedule[i]))
+                conflicts = calculator.calculate_period_conflicts(
+                    list(schedule[i]))
 
                 if conflicts < lowest_conflict_num:
                     lowest_conflict_period = i

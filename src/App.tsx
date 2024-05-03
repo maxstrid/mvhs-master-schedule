@@ -43,10 +43,7 @@ function App(this: unknown) {
     const fetchData = useCallback(() => {
         fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
             .then(res => res.json())
-            .then(data => {
-                console.log(data);
-                setData(data)
-            });
+            .then(data => setData(data));
 
         setDataCounter(prevDataCounter => prevDataCounter + 1);
     }, [grade]);
@@ -64,8 +61,6 @@ function App(this: unknown) {
             skipEmptyLines: true,
             delimiter: ",",
             complete: (results: any) => {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                console.log(results);
-                console.log(typeof results);
                 setImportData(results.data);
             }
         })
@@ -95,10 +90,6 @@ function App(this: unknown) {
                 }
             }
 
-            console.log(grade9Classes);
-            console.log(grade10Classes);
-            console.log(grade11Classes);
-            console.log(grade12Classes);
             fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
