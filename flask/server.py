@@ -2,14 +2,15 @@ from flask import Flask, jsonify, request
 from numpy import NaN
 import pandas as pd
 from conflict.conflict_calc import ConflictCalculator
-from conflict.schedule_generator import ScheduleGenerator, Classlist 
+from conflict.schedule_generator import ScheduleGenerator, Classlist
+
 app = Flask(__name__)
 
-ScheduleResponseBody = dict[str, int | list[dict[str, int | list[tuple[str, str]]]]]
+ScheduleResponseBody = dict[str,
+                            int | list[dict[str, int | list[tuple[str, str]]]]]
 ConflictResponseBody = dict[str, int]
 
 conflict_calculator = ConflictCalculator()
-conflict_calculator.parseFile()
 
 # dictionary with class level as key and class list as value
 grade_classes: dict[int, Classlist]  = {}
@@ -32,28 +33,31 @@ def parse_grade_classes():
 
         for schedule_class in schedule:
             if schedule_class is NaN:
-                    continue
+                continue
 
-            period_classlist[schedule_class.strip()] = conflict_calculator.course_list[schedule_class.strip()]
+            period_classlist[schedule_class.strip(
+            )] = conflict_calculator.course_list[schedule_class.strip()]
 
         grade_classes.update({period: period_classlist})
 
     return ""
 
+
 parse_grade_classes()
+
 
 
 # response the server sends when frontend requests conflict numbers
 class ConflictResponse:
 
     def __init__(self, period: list) -> None:
-        self.body: ConflictResponseBody = {
-            "conflicts": 0
-        }
+        self.body: ConflictResponseBody = {"conflicts": 0}
         self.currentPeriod = period
 
     def calc_conflicts(self) -> None:
-        self.body["conflicts"] = conflict_calculator.calcPeriodConflicts(self.currentPeriod)
+        self.body[
+            "conflicts"] = conflict_calculator.calculate_period_conflicts(
+                self.currentPeriod)
 
     def get_response(self) -> dict[str, ConflictResponseBody]:
         return {"body": self.body}
@@ -67,10 +71,16 @@ class ScheduleResponse:
             "schedule": []
         }
 
-    def add_classes(self, period: int, classes: list[str], calculator: ConflictCalculator) -> None:
+    def add_classes(self, period: int, classes: list[str],
+                    calculator: ConflictCalculator) -> None:
         # This is needed so mypy is happy with us assuming there is a .append function on this type.
         if type(self.body['schedule']) is list:
-            self.body["schedule"].append({"period": period, "classes": calculator.named_list(classes)})
+            self.body["schedule"].append({
+                "period":
+                period,
+                "classes":
+                calculator.named_list(classes)
+            })
 
     def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
@@ -94,11 +104,12 @@ def generate_schedule(grade: int):
 
     return response
 
+
 # does not actually updating anything
 # just calculates conflicts
-@app.route("/api/calc_period_conflicts/period=<period>", methods=["POST", "OPTIONS"])
-def calc_period_conflicts(period: int):
-    if request.method == "OPTIONS": # CORS preflight
+@app.route("/api/calculate_conflicts", methods=["POST", "OPTIONS"])
+def calc_period_conflicts():
+    if request.method == "OPTIONS":  # CORS preflight
         response = jsonify("")
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "*")
@@ -120,7 +131,7 @@ def calc_period_conflicts(period: int):
 def import_csv_data():
     global grade_classes
 
-    if request.method == "OPTIONS": # CORS preflight
+    if request.method == "OPTIONS":  # CORS preflight
         response = jsonify("")
         response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add("Access-Control-Allow-Headers", "*")
@@ -136,14 +147,16 @@ def import_csv_data():
     }
 
     for period, schedule in classes.items():
-        period_classlist: Classlist = {} 
+        period_classlist: Classlist = {}
 
         for schedule_class in schedule:
-            period_classlist[schedule_class.strip()] = conflict_calculator.course_list[schedule_class.strip()]
+            period_classlist[schedule_class.strip(
+            )] = conflict_calculator.course_list[schedule_class.strip()]
 
         grade_classes.update({period: period_classlist})
 
     return ""
+
 
 if __name__ == "__main__":
     app.run(debug=True)

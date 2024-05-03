@@ -4,10 +4,11 @@ import pprint
 from .schedule_generator import ScheduleGenerator
 from .conflict_calc import ConflictCalculator
 
+
 class TestScheduleGenerator(unittest.TestCase):
+
     def test_full(self):
         calculator = ConflictCalculator()
-        calculator.parseFile()
 
         generator = ScheduleGenerator(calculator, calculator.course_list)
 
@@ -15,7 +16,9 @@ class TestScheduleGenerator(unittest.TestCase):
 
         #TODO(max): make this actually verify total conflicts are reasonable
         for period in schedule.values():
-            print(calculator.named_list(list(period)), calculator.calcPeriodConflicts(list(period)))
+            print(calculator.named_list(list(period)),
+                  calculator.calculate_period_conflicts(list(period)))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -39,7 +39,7 @@ export function Schedule(props: ScheduleProps) {
     useEffect(() => {
         setClassConflicts([])
         for (let i = 0; i < periods.length; i++) {
-            fetch(import.meta.env.VITE_BACKEND_URL + "/api/calc_period_conflicts/period=" + i, {
+            fetch(import.meta.env.VITE_BACKEND_URL + "/api/calculate_conflicts", {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(periods[i].classes)
