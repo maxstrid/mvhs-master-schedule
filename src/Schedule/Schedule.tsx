@@ -17,11 +17,6 @@ type ClassId = {
     j: number;
 };
 
-type ClassConflict = {
-    period: number,
-    total_conflicts: number,
-}
-
 type SwapAction = {
     first: ClassId,
     second: ClassId
@@ -30,7 +25,7 @@ type SwapAction = {
 export function Schedule(props: ScheduleProps) {
     const [highlightedClasses, setHighlightedClasses] = useState<ClassId[]>([]);
     const [periods, setPeriods] = useState<SchedulePeriod[]>(props.periods);
-    const [classConflicts, setClassConflicts] = useState<ClassConflict[]>([]);
+    const [classConflicts, setClassConflicts] = useState<number[]>([]);
     const [swapCounter, setSwapCounter] = useState<number>(0);
     const [outlinedClasses, setOutlinedClasses] = useState<ClassId[]>([]);
     const [actionList, setActionList] = useState<SwapAction[]>([]);
@@ -38,19 +33,26 @@ export function Schedule(props: ScheduleProps) {
 
     useEffect(() => {
         setClassConflicts([])
+
         for (let i = 0; i < periods.length; i++) {
-            fetch(import.meta.env.VITE_BACKEND_URL + "/api/calculate_conflicts", {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(periods[i].classes)
-            }).then(res => res.json())
-                .then(currentPeriod =>
-                    setClassConflicts(classConflicts => [...classConflicts, {
-                        period: i,
-                        total_conflicts: currentPeriod.conflicts,
-                    }])
-                );
+            (function(index: number) {
+                fetch(import.meta.env.VITE_BACKEND_URL + "/api/calculate_conflicts", {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(periods[index].classes)
+                }).then(res => res.json())
+                    .then(currentPeriod => {
+                        setClassConflicts(classConflicts => {
+                            const classConflict = [...classConflicts]
+
+                            classConflict[index] = currentPeriod.conflicts
+
+                            return classConflict;
+                        })
+                    })
+            })(i);
         }
+
     }, [periods]);
 
     const classesContains = useCallback((id: ClassId) => {
@@ -179,7 +181,7 @@ export function Schedule(props: ScheduleProps) {
                         <div className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-xl shadow-md bg-gray-100' key={swapCounter + i}>
                             <div>
                                 <p>Period {period.period}</p>
-                                <p>Conflicts: {(classConflicts.length != 0 && classConflicts[i] != undefined) ? classConflicts[i].total_conflicts : 0}</p>
+                                <p>Conflicts: {(classConflicts.length != 0 && classConflicts[period.period - 1] != undefined) ? classConflicts[period.period - 1] : 0}</p>
                             </div>
                             {period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
                                 const id: ClassId = {
