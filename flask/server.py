@@ -1,17 +1,44 @@
 from flask import Flask, jsonify, request
+from numpy import NaN
 import pandas as pd
 from conflict.conflict_calc import ConflictCalculator
 from conflict.schedule_generator import ScheduleGenerator, Classlist 
 app = Flask(__name__)
 
-ScheduleResponseBody = dict[str, int | list[dict[str, int | list[str]]]]
+ScheduleResponseBody = dict[str, int | list[dict[str, int | list[tuple[str, str]]]]]
 ConflictResponseBody = dict[str, int]
-
 
 conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
 
 grade_classes: dict[int, Classlist]  = {}
+
+def parse_grade_classes():
+    class_lists = pd.read_csv('flask/conflict/grade_level_classes.csv')
+
+    print(class_lists)
+
+    classes = {
+        9: class_lists["Grade 9"],
+        10: class_lists["Grade 10"],
+        11: class_lists["Grade 11"],
+        12: class_lists["Grade 12"],
+    }
+
+    for period, schedule in classes.items():
+        period_classlist: Classlist = {}
+
+        for schedule_class in schedule:
+            if schedule_class is NaN:
+                    continue
+
+            period_classlist[schedule_class.strip()] = conflict_calculator.course_list[schedule_class.strip()]
+
+        grade_classes.update({period: period_classlist})
+
+    return ""
+
+parse_grade_classes()
 
 class ConflictResponse:
 
@@ -35,10 +62,10 @@ class ScheduleResponse:
             "schedule": []
         }
 
-    def add_classes(self, period: int, classes: list[str]) -> None:
+    def add_classes(self, period: int, classes: list[str], calculator: ConflictCalculator) -> None:
         # This is needed so mypy is happy with us assuming there is a .append function on this type.
         if type(self.body['schedule']) is list:
-            self.body["schedule"].append({"period": period, "classes": classes})
+            self.body["schedule"].append({"period": period, "classes": calculator.named_list(classes)})
 
     def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
@@ -54,7 +81,7 @@ def generate_schedule(grade: int):
     schedule = generator.gen_schedule()
 
     for period, classes in schedule.items():
-        scheduleRes.add_classes(period + 1, list(classes))
+        scheduleRes.add_classes(period + 1, list(classes), conflict_calculator)
 
     response = jsonify(scheduleRes.get_response())
     response.headers.add('Access-Control-Allow-Origin', '*')
