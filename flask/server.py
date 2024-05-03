@@ -11,8 +11,10 @@ ConflictResponseBody = dict[str, int]
 conflict_calculator = ConflictCalculator()
 conflict_calculator.parseFile()
 
+# dictionary with class level as key and class list as value
 grade_classes: dict[int, Classlist]  = {}
 
+# parses grade level classes based off class ids in grade_level_classes.csv file
 def parse_grade_classes():
     class_lists = pd.read_csv('flask/conflict/grade_level_classes.csv')
 
@@ -40,6 +42,8 @@ def parse_grade_classes():
 
 parse_grade_classes()
 
+
+# response the server sends when frontend requests conflict numbers
 class ConflictResponse:
 
     def __init__(self, period: list) -> None:
@@ -54,6 +58,7 @@ class ConflictResponse:
     def get_response(self) -> dict[str, ConflictResponseBody]:
         return {"body": self.body}
 
+# response the server sends when generating a schedule
 class ScheduleResponse:
 
     def __init__(self, grade_level: int) -> None:
@@ -70,6 +75,7 @@ class ScheduleResponse:
     def get_response(self) -> dict[str, ScheduleResponseBody]:
         return {"body": self.body}
 
+# generates schedule based on grade number
 @app.route("/api/generate_schedule/grade=<grade>", methods=["GET"])
 def generate_schedule(grade: int):
     grade = int(grade)
@@ -109,6 +115,7 @@ def calc_period_conflicts(period: int):
 
     return response
 
+# parses csv file from user
 @app.route("/api/import_csv_data", methods=["POST", "OPTIONS"])
 def import_csv_data():
     global grade_classes

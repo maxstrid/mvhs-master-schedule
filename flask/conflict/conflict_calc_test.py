@@ -1,14 +1,18 @@
 import unittest
 
+# imports conflict calculator
+# may need to remove leading . to test
 from .conflict_calc import ConflictCalculator
 
 class TestConflictCalculator(unittest.TestCase):
+    # tests conflicts of three classes using ids
     def test_three_classes(self):
         calculator = ConflictCalculator()
         calculator.parseFile()
 
         self.assertEqual(calculator.calcPeriodConflicts(['AA5011', 'HO0070', 'AA6010']), 51)
 
+    # tests two full periods of classes using names to check
     def test_period(self):
         calculator = ConflictCalculator()
         calculator.parseFile()

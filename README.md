@@ -28,6 +28,18 @@ Running `npm run dev` will start the frontend and flask server. This requires `f
 
 Deploy a .env or .env.production file to load production constants
 
+## Manual
+
+Choose the current grade level using the drop down box in the top
+
+To switch the grade level, press switch and then press regenerate
+
+To swap two classes, click on two classes and press the swap button
+
+To undo, press `Ctrl-Z` and to redo, press `Ctrl-Y`
+
+Press regenerate to clear all changes made
+
 ## Contributors
 
 * Maxwell Henderson

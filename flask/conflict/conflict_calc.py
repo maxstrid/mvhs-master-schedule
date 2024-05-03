@@ -65,7 +65,8 @@ class ConflictCalculator:
           self.course_list[current_course_id][conflicting_course] = int(chunk[2])
 
     print("File Parsed")
-  
+
+  # gets amount of conflicts from dictionary
   def get_number(self, Tclass: str, Cclass:str):
     if (Tclass == Cclass):
       return 0
@@ -80,6 +81,7 @@ class ConflictCalculator:
   def named_list(self, period: list[str]) -> list[tuple[str, str]]:
     return list(map(lambda x: (x, self.course_map[x]), period))
 
+  # calculates all of the conflicts in a period
   def calcPeriodConflicts(self, period: list):
     conflict_number = 0
     for i in range(len(period)):
