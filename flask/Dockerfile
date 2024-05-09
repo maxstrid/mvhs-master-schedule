@@ -2,9 +2,11 @@ FROM python:3.11.9-alpine
 
 WORKDIR /flask
 
-RUN pip3 install numpy yapf flask pandas pandas-stubs types-colorama
+RUN pip3 install poetry
 
 COPY . .
 
-ENTRYPOINT ["python3"]
-CMD ["server.py"]
+RUN poetry install
+
+ENTRYPOINT ["poetry"]
+CMD ["run", "python3", "server.py"]
