@@ -2,11 +2,9 @@ FROM python:3.11.9-alpine
 
 WORKDIR /flask
 
-COPY flask/requirements.txt flask/requirements.txt
-RUN pip3 install -r flask/requirements.txt
+RUN pip3 install numpy yapf flask pandas pandas-stubs types-colorama
 
 COPY . .
 
-EXPOSE 5000
-
-CMD [ "python3", "-m" , "flask", "--app", "flask/server", "run", "--host=0.0.0.0"]
+ENTRYPOINT ["python3"]
+CMD ["server.py"]

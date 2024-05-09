@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "deploy": "firebase deploy --public dist",
+    "deploy": "firebase deploy --public dist"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",

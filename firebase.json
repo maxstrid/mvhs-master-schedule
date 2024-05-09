@@ -1,10 +1,21 @@
 {
   "hosting": {
-    "source": ".",
+    "public": "dist",
+    "rewrites": [
+        {
+            "source": "**",
+            "run": {
+                "serviceId": "flask",
+                "region": "us-west1",
+                "pinTag": true
+            }
+        }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "flask/"
     ],
     "frameworksBackend": {
       "region": "us-west1"
