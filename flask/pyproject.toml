@@ -15,6 +15,8 @@ python = "^3.11"
 numpy = "^1.26.4"
 flask = "^3.0.3"
 pandas = "^2.2.2"
+pandas-stubs = "^2.2.1.240316"
 
 [tool.poetry.group.dev.dependencies]
 yapf = "^0.40.2"
+mypy = "^1.10.0"
