@@ -9,6 +9,7 @@ package-mode = false
 [tool.poetry.scripts]
 gbuild = "scripts:gcloud_build"
 gdeploy = "scripts:gcloud_deploy"
+gdev = "scripts:gcloud_dev"
 
 [tool.poetry.dependencies]
 python = "^3.11"
