@@ -22,4 +22,4 @@ jobs:
       - name: Install python dependencies
         run: python -m poetry -C flask/ install
       - name: Run Tests
-        run: python -m poetry run unittest discover -s flask/ -p *_test.py
+        run: python -m poetry -C flask/ run unittest discover -s flask/ -p *_test.py
