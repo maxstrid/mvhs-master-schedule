@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 
 import { CSVLink } from "react-csv";
 
@@ -49,6 +49,8 @@ export function Schedule(props: ScheduleProps) {
     const [outlinedClasses, setOutlinedClasses] = useState<ClassId[]>([]);
     const [actionList, setActionList] = useState<SwapAction[]>([]);
     const [undoIndex, setUndoIndex] = useState<number | null>(null);
+    const [exportScheduleData, setExportScheduleData] = useState<ScheduleExportPeriodIds[]>([]);
+    const csvLink = useRef();
 
     useEffect(() => {
         setClassConflicts([])
@@ -183,8 +185,7 @@ export function Schedule(props: ScheduleProps) {
         }
     }, [undo, redo]);
 
-    const exportSchedule = useCallback(() => {
-        let scheduleRows: ScheduleExportPeriodIds[] = [];
+    const exportSchedule = () => {
         let highestLength: number = 0;
         periods.forEach((value) => {
             if (value["classes"].length > highestLength) {
@@ -192,28 +193,23 @@ export function Schedule(props: ScheduleProps) {
             }
         });
 
-        for (let i = 0; i < highestLength; i++) {
-            scheduleRows.push({
-                period1ClassIds: periods[0]["classes"][i]["id"] ? periods[0]["classes"][i]["id"] : "",
-                period2ClassIds: periods[1]["classes"][i]["id"] ? periods[1]["classes"][i]["id"] : "",
-                period3ClassIds: periods[2]["classes"][i]["id"] ? periods[2]["classes"][i]["id"] : "",
-                period4ClassIds: periods[3]["classes"][i]["id"] ? periods[3]["classes"][i]["id"] : "",
-                period5ClassIds: periods[4]["classes"][i]["id"] ? periods[4]["classes"][i]["id"] : "",
-                period6ClassIds: periods[5]["classes"][i]["id"] ? periods[5]["classes"][i]["id"] : "",
-                period7ClassIds: periods[6]["classes"][i]["id"] ? periods[6]["classes"][i]["id"] : "",
-            })
+        for (let i: number = 0; i < highestLength; i++) {
+            setExportScheduleData(exportScheduleData => [...exportScheduleData, {
+                period1ClassIds: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['id'],
+                period2ClassIds: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['id'],
+                period3ClassIds: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['id'],
+                period4ClassIds: periods[3]["classes"][i] == undefined ? "" : periods[3]["classes"][i]['id'],
+                period5ClassIds: periods[4]["classes"][i] == undefined ? "" : periods[4]["classes"][i]['id'],
+                period6ClassIds: periods[5]["classes"][i] == undefined ? "" : periods[5]["classes"][i]['id'],
+                period7ClassIds: periods[6]["classes"][i] == undefined ? "" : periods[6]["classes"][i]['id'],
+            }]);
         }
+        clickLink();
+    };
 
-        console.log(scheduleRows);
-
-        const csvContent = "data:text/csv;charset=utf-8," + scheduleRows.map(item => Object.values(item).join(',')).join('\n');
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "data.csv");
-        document.body.appendChild(link); // Required for Firefox
-        link.click();
-    }, []);
+    const clickLink = () => {
+        csvLink.current?.link.click();
+    }
 
     document.onkeydown = onKeyPressHandler;
 
@@ -260,6 +256,13 @@ export function Schedule(props: ScheduleProps) {
                 <ArrowUpTrayIcon className='h-6 w-6' />
                 <span>Export</span>
             </button>
+            <CSVLink
+                data={exportScheduleData}
+                filename='schedules.csv'
+                className='hidden'
+                ref={csvLink}
+                target='_bank'
+            />
         </div >
 
     )
