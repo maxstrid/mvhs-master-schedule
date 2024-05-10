@@ -2,7 +2,7 @@
 name = "master-schedule-backend"
 version = "0.1.0"
 description = ""
-authors = []
+authors = ["Maxwell Henderson (mxwhenderson@gmail.com)", "Milo Lin (milobylin@gmail.com)"]
 packages = [{include = "conflict"}]
 package-mode = false
 
