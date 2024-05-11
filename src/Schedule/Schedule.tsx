@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { CSVLink } from "react-csv";
 
@@ -45,14 +45,13 @@ export function Schedule(props: ScheduleProps) {
     const [actionList, setActionList] = useState<SwapAction[]>([]);
     const [undoIndex, setUndoIndex] = useState<number | null>(null);
     const [exportScheduleData, setExportScheduleData] = useState<ScheduleExportPeriodIds[]>([]);
-    const csvLink = useRef<CSVLink>(null);
 
     useEffect(() => {
         setClassConflicts([])
 
         for (let i = 0; i < periods.length; i++) {
             (function(index: number) {
-                fetch(import.meta.env.VITE_BACKEND_URL + "api/calculate_conflicts", {
+                fetch(import.meta.env.VITE_BACKEND_URL + "/api/calculate_conflicts", {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(periods[index].classes)
@@ -210,10 +209,6 @@ export function Schedule(props: ScheduleProps) {
         setExportScheduleData(exportSchedule);
     }, [exportScheduleData, periods]);
 
-    const exportSchedule = () => {
-        csvLink.current?.link.click();
-    };
-
     useEffect(() => buildExportSchedule, [periods]);
 
     document.onkeydown = onKeyPressHandler;
@@ -257,17 +252,15 @@ export function Schedule(props: ScheduleProps) {
                     :
                     <></>
             }
-            <button className='btn h-10 w-40 justify-center self-center' onClick={exportSchedule}>
-                <ArrowUpTrayIcon className='h-6 w-6' />
-                <span>Export</span>
-            </button>
             <CSVLink
                 data={exportScheduleData}
                 filename='schedule.csv'
-                className='hidden'
-                ref={csvLink}
-                target='_bank'
-            />
+                className='btn h-10 w-40 justify-center self-center'
+                target='_blank'
+            >
+                <ArrowUpTrayIcon className='h-6 w-6' /> 
+                <span>Export</span> 
+            </CSVLink>
         </div >
 
     )
