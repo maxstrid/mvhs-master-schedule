@@ -194,7 +194,7 @@ export function Schedule(props: ScheduleProps) {
             }
         });
         for (let i: number = 0; i < highestLength; i++) {
-            let row: ScheduleExportPeriodIds = {
+            const row: ScheduleExportPeriodIds = {
                 period1ClassIds: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['id'],
                 period2ClassIds: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['id'],
                 period3ClassIds: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['id'],
@@ -208,9 +208,9 @@ export function Schedule(props: ScheduleProps) {
         setExportScheduleData(exportSchedule);
     }, [exportScheduleData, periods]);
 
-    const exportSchedule = useCallback(() => {
+    const exportSchedule = () => {
         csvLink.current?.link.click();
-    }, [exportScheduleData]);
+    };
 
     useEffect(() => buildExportSchedule, [periods]);
 
@@ -261,7 +261,7 @@ export function Schedule(props: ScheduleProps) {
             </button>
             <CSVLink
                 data={exportScheduleData}
-                filename='schedules.csv'
+                filename='schedule.csv'
                 className='hidden'
                 ref={csvLink}
                 target='_bank'
