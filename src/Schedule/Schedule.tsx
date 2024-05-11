@@ -50,7 +50,7 @@ export function Schedule(props: ScheduleProps) {
     const [actionList, setActionList] = useState<SwapAction[]>([]);
     const [undoIndex, setUndoIndex] = useState<number | null>(null);
     const [exportScheduleData, setExportScheduleData] = useState<ScheduleExportPeriodIds[]>([]);
-    const csvLink = useRef();
+    const csvLink = useRef<CSVLink>(null);
 
     useEffect(() => {
         setClassConflicts([])
@@ -185,16 +185,16 @@ export function Schedule(props: ScheduleProps) {
         }
     }, [undo, redo]);
 
-    const exportSchedule = () => {
+    const buildExportSchedule = useCallback(() => {
+        const exportSchedule: ScheduleExportPeriodIds[] = [];
         let highestLength: number = 0;
         periods.forEach((value) => {
             if (value["classes"].length > highestLength) {
                 highestLength = value["classes"].length;
             }
         });
-
         for (let i: number = 0; i < highestLength; i++) {
-            setExportScheduleData(exportScheduleData => [...exportScheduleData, {
+            let row: ScheduleExportPeriodIds = {
                 period1ClassIds: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['id'],
                 period2ClassIds: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['id'],
                 period3ClassIds: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['id'],
@@ -202,14 +202,17 @@ export function Schedule(props: ScheduleProps) {
                 period5ClassIds: periods[4]["classes"][i] == undefined ? "" : periods[4]["classes"][i]['id'],
                 period6ClassIds: periods[5]["classes"][i] == undefined ? "" : periods[5]["classes"][i]['id'],
                 period7ClassIds: periods[6]["classes"][i] == undefined ? "" : periods[6]["classes"][i]['id'],
-            }]);
+            };
+            exportSchedule.push(row);
         }
-        clickLink();
-    };
+        setExportScheduleData(exportSchedule);
+    }, [exportScheduleData, periods]);
 
-    const clickLink = () => {
+    const exportSchedule = useCallback(() => {
         csvLink.current?.link.click();
-    }
+    }, [exportScheduleData]);
+
+    useEffect(() => buildExportSchedule, [periods]);
 
     document.onkeydown = onKeyPressHandler;
 
