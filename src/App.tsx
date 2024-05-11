@@ -41,7 +41,7 @@ function App(this: unknown) {
     const fileInput = createRef<HTMLInputElement>();
 
     const fetchData = useCallback(() => {
-        fetch(import.meta.env.VITE_BACKEND_URL + "/api/generate_schedule/grade=" + grade)
+        fetch(import.meta.env.VITE_BACKEND_URL + "api/generate_schedule/grade=" + grade)
             .then(res => res.json())
             .then(data => setData(data));
 
@@ -90,7 +90,7 @@ function App(this: unknown) {
                 }
             }
 
-            fetch(import.meta.env.VITE_BACKEND_URL + "/api/import_csv_data", {
+            fetch(import.meta.env.VITE_BACKEND_URL + "api/import_csv_data", {
                 method: 'POST',
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes })

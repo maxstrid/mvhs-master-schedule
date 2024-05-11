@@ -4,6 +4,8 @@ import pandas as pd
 from conflict.conflict_calc import ConflictCalculator
 from conflict.schedule_generator import ScheduleGenerator, Classlist
 
+import os
+
 app = Flask(__name__)
 
 ScheduleResponseBody = dict[str,
@@ -17,7 +19,8 @@ grade_classes: dict[int, Classlist]  = {}
 
 # parses grade level classes based off class ids in grade_level_classes.csv file
 def parse_grade_classes():
-    class_lists = pd.read_csv('flask/conflict/grade_level_classes.csv')
+    dirname = os.path.dirname(__file__)
+    class_lists = pd.read_csv(os.path.join(dirname, 'conflict/grade_level_classes.csv'))
 
     print(class_lists)
 
@@ -157,6 +160,6 @@ def import_csv_data():
 
     return ""
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 8080))
+    app.run(debug=True, host='0.0.0.0', port=port)

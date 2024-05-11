@@ -52,7 +52,7 @@ export function Schedule(props: ScheduleProps) {
 
         for (let i = 0; i < periods.length; i++) {
             (function(index: number) {
-                fetch(import.meta.env.VITE_BACKEND_URL + "/api/calculate_conflicts", {
+                fetch(import.meta.env.VITE_BACKEND_URL + "api/calculate_conflicts", {
                     method: 'POST',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(periods[index].classes)
