@@ -1,6 +1,0 @@
-numpy
-yapf
-flask
-pandas
-pandas-stubs
-types-colorama
