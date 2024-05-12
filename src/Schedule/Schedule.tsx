@@ -1,5 +1,9 @@
 import { useState, useCallback, useEffect } from 'react';
 
+import { CSVLink } from "react-csv";
+
+import { ArrowUpTrayIcon } from '@heroicons/react/20/solid';
+
 export type SchedulePeriod = {
     period: number;
     classes: {
@@ -22,6 +26,16 @@ type SwapAction = {
     second: ClassId
 }
 
+type ScheduleExportPeriodIds = {
+    period1ClassIds: string;
+    period2ClassIds: string;
+    period3ClassIds: string;
+    period4ClassIds: string;
+    period5ClassIds: string;
+    period6ClassIds: string;
+    period7ClassIds: string;
+};
+
 export function Schedule(props: ScheduleProps) {
     const [highlightedClasses, setHighlightedClasses] = useState<ClassId[]>([]);
     const [periods, setPeriods] = useState<SchedulePeriod[]>(props.periods);
@@ -30,6 +44,7 @@ export function Schedule(props: ScheduleProps) {
     const [outlinedClasses, setOutlinedClasses] = useState<ClassId[]>([]);
     const [actionList, setActionList] = useState<SwapAction[]>([]);
     const [undoIndex, setUndoIndex] = useState<number | null>(null);
+    const [exportScheduleData, setExportScheduleData] = useState<ScheduleExportPeriodIds[]>([]);
 
     useEffect(() => {
         setClassConflicts([])
@@ -171,6 +186,29 @@ export function Schedule(props: ScheduleProps) {
         }
     }, [undo, redo]);
 
+    useEffect(() => {
+        const exportSchedule: ScheduleExportPeriodIds[] = [];
+        let highestLength: number = 0;
+        periods.forEach((value) => {
+            if (value["classes"].length > highestLength) {
+                highestLength = value["classes"].length;
+            }
+        });
+        for (let i: number = 0; i < highestLength; i++) {
+            const row: ScheduleExportPeriodIds = {
+                period1ClassIds: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['id'],
+                period2ClassIds: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['id'],
+                period3ClassIds: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['id'],
+                period4ClassIds: periods[3]["classes"][i] == undefined ? "" : periods[3]["classes"][i]['id'],
+                period5ClassIds: periods[4]["classes"][i] == undefined ? "" : periods[4]["classes"][i]['id'],
+                period6ClassIds: periods[5]["classes"][i] == undefined ? "" : periods[5]["classes"][i]['id'],
+                period7ClassIds: periods[6]["classes"][i] == undefined ? "" : periods[6]["classes"][i]['id'],
+            };
+            exportSchedule.push(row);
+        }
+        setExportScheduleData(exportSchedule);
+    }, [periods]);
+
     document.onkeydown = onKeyPressHandler;
 
     return (
@@ -212,6 +250,15 @@ export function Schedule(props: ScheduleProps) {
                     :
                     <></>
             }
+            <CSVLink
+                data={exportScheduleData}
+                filename='schedule.csv'
+                className='btn h-10 w-40 justify-center self-center'
+                target='_blank'
+            >
+                <ArrowUpTrayIcon className='h-6 w-6' /> 
+                <span>Export</span> 
+            </CSVLink>
         </div >
 
     )
