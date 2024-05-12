@@ -186,7 +186,7 @@ export function Schedule(props: ScheduleProps) {
         }
     }, [undo, redo]);
 
-    const buildExportSchedule = useCallback(() => {
+    useEffect(() => {
         const exportSchedule: ScheduleExportPeriodIds[] = [];
         let highestLength: number = 0;
         periods.forEach((value) => {
@@ -207,9 +207,7 @@ export function Schedule(props: ScheduleProps) {
             exportSchedule.push(row);
         }
         setExportScheduleData(exportSchedule);
-    }, [exportScheduleData, periods]);
-
-    useEffect(() => buildExportSchedule, [periods]);
+    }, [periods]);
 
     document.onkeydown = onKeyPressHandler;
 
