@@ -36,6 +36,16 @@ type ScheduleExportPeriodIds = {
     period7ClassIds: string;
 };
 
+type ScheduleExportPeriodClasses = {
+    period1Class: string;
+    period2Class: string;
+    period3Class: string;
+    period4Class: string;
+    period5Class: string;
+    period6Class: string;
+    period7Class: string;
+};
+
 export function Schedule(props: ScheduleProps) {
     const [highlightedClasses, setHighlightedClasses] = useState<ClassId[]>([]);
     const [periods, setPeriods] = useState<SchedulePeriod[]>(props.periods);
@@ -44,7 +54,8 @@ export function Schedule(props: ScheduleProps) {
     const [outlinedClasses, setOutlinedClasses] = useState<ClassId[]>([]);
     const [actionList, setActionList] = useState<SwapAction[]>([]);
     const [undoIndex, setUndoIndex] = useState<number | null>(null);
-    const [exportScheduleData, setExportScheduleData] = useState<ScheduleExportPeriodIds[]>([]);
+    const [exportScheduleIdData, setExportScheduleIdData] = useState<ScheduleExportPeriodIds[]>([]);
+    const [exportScheduleClassData, setExportScheduleClassData] = useState<ScheduleExportPeriodClasses[]>([]);
 
     useEffect(() => {
         setClassConflicts([])
@@ -187,7 +198,8 @@ export function Schedule(props: ScheduleProps) {
     }, [undo, redo]);
 
     useEffect(() => {
-        const exportSchedule: ScheduleExportPeriodIds[] = [];
+        const exportScheduleIds: ScheduleExportPeriodIds[] = [];
+        const exportScheduleClasses: ScheduleExportPeriodClasses[] = [];
         let highestLength: number = 0;
         periods.forEach((value) => {
             if (value["classes"].length > highestLength) {
@@ -195,7 +207,7 @@ export function Schedule(props: ScheduleProps) {
             }
         });
         for (let i: number = 0; i < highestLength; i++) {
-            const row: ScheduleExportPeriodIds = {
+            const idRow: ScheduleExportPeriodIds = {
                 period1ClassIds: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['id'],
                 period2ClassIds: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['id'],
                 period3ClassIds: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['id'],
@@ -204,9 +216,20 @@ export function Schedule(props: ScheduleProps) {
                 period6ClassIds: periods[5]["classes"][i] == undefined ? "" : periods[5]["classes"][i]['id'],
                 period7ClassIds: periods[6]["classes"][i] == undefined ? "" : periods[6]["classes"][i]['id'],
             };
-            exportSchedule.push(row);
+            exportScheduleIds.push(idRow);
+            const nameRow: ScheduleExportPeriodClasses = {
+                period1Class: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['name'],
+                period2Class: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['name'],
+                period3Class: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['name'],
+                period4Class: periods[3]["classes"][i] == undefined ? "" : periods[3]["classes"][i]['name'],
+                period5Class: periods[4]["classes"][i] == undefined ? "" : periods[4]["classes"][i]['name'],
+                period6Class: periods[5]["classes"][i] == undefined ? "" : periods[5]["classes"][i]['name'],
+                period7Class: periods[6]["classes"][i] == undefined ? "" : periods[6]["classes"][i]['name'],
+            };
+            exportScheduleClasses.push(nameRow);
         }
-        setExportScheduleData(exportSchedule);
+        setExportScheduleIdData(exportScheduleIds);
+        setExportScheduleClassData(exportScheduleClasses);
     }, [periods]);
 
     document.onkeydown = onKeyPressHandler;
@@ -250,15 +273,26 @@ export function Schedule(props: ScheduleProps) {
                     :
                     <></>
             }
-            <CSVLink
-                data={exportScheduleData}
-                filename='schedule.csv'
-                className='btn h-10 w-40 justify-center self-center'
-                target='_blank'
-            >
-                <ArrowUpTrayIcon className='h-6 w-6' /> 
-                <span>Export</span> 
-            </CSVLink>
+            <div className='flex flex-row m-auto'>
+                <CSVLink
+                    data={exportScheduleIdData}
+                    filename='scheduleIds.csv'
+                    className='btn h-10 w-40 justify-center self-center'
+                    target='_blank'
+                >
+                    <ArrowUpTrayIcon className='h-6 w-6' />
+                    <span>Export IDs</span>
+                </CSVLink>
+                <CSVLink
+                    data={exportScheduleClassData}
+                    filename='scheduleClasses.csv'
+                    className='btn h-10 w-40 justify-center self-center'
+                    target='_blank'
+                >
+                    <ArrowUpTrayIcon className='h-6 w-6' />
+                    <span>Export classes</span>
+                </CSVLink>
+            </div>
         </div >
 
     )
