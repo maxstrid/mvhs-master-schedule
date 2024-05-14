@@ -9,4 +9,4 @@ COPY . .
 RUN poetry install
 
 ENTRYPOINT ["poetry"]
-CMD ["run", "python3", "server.py"]
+CMD ["run", "python3", "app.py"]
