@@ -7,6 +7,8 @@ import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/20/solid';
 
 import { ScheduleResponse, FlaskBackend } from './api';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import Papa from 'papaparse';
 
 type DataRow = {
@@ -30,7 +32,14 @@ function App() {
     const fileInput = createRef<HTMLInputElement>();
 
     const flask_backend = useMemo<FlaskBackend>(() => {
-        return new FlaskBackend("generic_id")
+        let id = localStorage.getItem('id')
+
+        if (id == null) {
+            id = uuidv4();
+            localStorage.setItem('id', id!);
+        }
+
+        return new FlaskBackend(id!);
     }, []);
 
     const fetchData = useCallback(() => {
