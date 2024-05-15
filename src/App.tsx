@@ -9,24 +9,12 @@ import { ScheduleResponse, FlaskBackend } from './api';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import Papa from 'papaparse';
 import { Modal } from './Modal';
-
-type DataRow = {
-    "Grade 9": string,
-    "Grade 10": string,
-    "Grade 11": string,
-    "Grade 12": string,
-    "Total # of Sections": string,
-    "Total # of Sections_1": string,
-    "Total # of Sections_2": string,
-    "Total # of Sections_3": string,
-}
 
 enum ImportType {
     GradeLevelClasses = "GradeLevelClasses",
     ConflictMatrix = "ConflictMatrix",
-};
+}
 
 function App() {
     const [data, setData] = useState<ScheduleResponse | null>(null);
@@ -134,7 +122,7 @@ function App() {
                         <ArrowDownTrayIcon className='h-6 w-6' />
                         <span>Conflict Matrix</span>
                     </button>
-                    <input ref={fileInput} type="file" accept=".csv" onChange={handleFileUpload} hidden></input>
+                    <input ref={fileInput} type="file" accept=".*" onChange={handleFileUpload} hidden></input>
                 </Modal>
                 <button className='btn' onClick={fetchData} >
                     <ArrowPathIcon className='h-6 w-6' />

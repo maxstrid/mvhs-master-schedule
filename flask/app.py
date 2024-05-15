@@ -110,14 +110,27 @@ def import_grade_level_classes():
 
     parser = GradeLevelClassParser(client_data.conflict_calculator)
 
-    client_data.grade_level_classes = parser.parse_from_string(grade_level_class_data)
+    client_data.grade_level_classes = parser.parse_from_string(
+        grade_level_class_data)
 
-    return ""
+    return "", 200
 
 
-@app.route("/api/import/conlict_matrix", methods=["POST"])
+@app.route("/api/import/conflict_matrix", methods=["POST"])
 def import_conflict_matrix():
-    return ""
+    args = request.args.to_dict()
+
+    if args["id"] not in clients:
+        clients[args["id"]] = ClientData()
+
+    client_data = clients[args["id"]]
+
+    conflict_matrix_data = request.get_json()['data']
+
+    client_data.conflict_calculator.parse(conflict_matrix_data)
+
+    return "", 200
+
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 8080))
