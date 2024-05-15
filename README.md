@@ -32,13 +32,20 @@ Deploy a .env or .env.production file to load production constants
 
 Choose the current grade level using the drop down box in the top
 
-To switch the grade level, press switch and then press regenerate
+To switch the grade level, press switch
 
 To swap two classes, click on two classes and press the swap button
 
 To undo, press `Ctrl-Z` and to redo, press `Ctrl-Y`
 
 Press regenerate to clear all changes made
+
+When the import button is clicked,
+it will bring up a modal which will prompt you to
+either import the grade level classes or the conflict matrix
+
+To export the schedule, the export button will bring up another modal
+which gives the option to export as class names or class ids
 
 ## Contributors
 
