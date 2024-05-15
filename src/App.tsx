@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect, createRef } from 'react';
 
 import './App.css';
 
-import { Schedule, SchedulePeriodProp } from './Schedule';
+import { Schedule, SchedulePeriod } from './Schedule';
 import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/20/solid';
 
 import { ScheduleResponse, FlaskBackend } from './api';
@@ -64,32 +64,33 @@ function App() {
     }, []);
 
     const sendFileData = useCallback(() => {
-        const grade9Classes: string[] = [];
-        const grade10Classes: string[] = [];
-        const grade11Classes: string[] = [];
-        const grade12Classes: string[] = [];
+        const grade_9: string[] = [];
+        const grade_10: string[] = [];
+        const grade_11: string[] = [];
+        const grade_12: string[] = [];
 
         for (const row of importData) {
             if (row["Grade 9"] != "") {
-                grade9Classes.push(row["Grade 9"]);
+                grade_9.push(row["Grade 9"]);
             }
             if (row["Grade 10"] != "") {
-                grade10Classes.push(row["Grade 10"]);
+                grade_10.push(row["Grade 10"]);
             }
             if (row["Grade 11"] != "") {
-                grade11Classes.push(row["Grade 11"]);
+                grade_11.push(row["Grade 11"]);
             }
             if (row["Grade 12"] != "") {
-                grade12Classes.push(row["Grade 12"]);
+                grade_12.push(row["Grade 12"]);
             }
         }
 
-        fetch(import.meta.env.VITE_BACKEND_URL + "api/import_csv_data", {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes })
-        }).then();
-    }, [importData]);
+        flask_backend.import_grade_level_classes({
+            grade_9: grade_9,
+            grade_10: grade_10,
+            grade_11: grade_11,
+            grade_12: grade_12
+        });
+    }, [importData, flask_backend]);
 
     useEffect(() => fetchData(), [fetchData, grade]);
 
@@ -120,7 +121,7 @@ function App() {
                     <Schedule flask_backend={flask_backend} schedule={data.body.schedule.map((element: {
                         period: number;
                         classes: string[][];
-                    }): SchedulePeriodProp => {
+                    }): SchedulePeriod => {
                         return {
                             period: element.period,
                             classes: element.classes.map((className: string[]) => ({

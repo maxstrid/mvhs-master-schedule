@@ -109,10 +109,10 @@ def import_grade_level_classes():
     class_lists = request.get_json()
 
     classes = {
-        9: class_lists["grade9Classes"],
-        10: class_lists["grade10Classes"],
-        11: class_lists["grade11Classes"],
-        12: class_lists["grade12Classes"],
+        9: class_lists["grade_9"],
+        10: class_lists["grade_10"],
+        11: class_lists["grade_11"],
+        12: class_lists["grade_12"],
     }
 
     parser = GradeLevelClassParser(client_data.conflict_calculator)

@@ -33,7 +33,13 @@ export class FlaskBackend {
         return schedule_response
     }
 
-    async call(url: string, method: string, data?: string): Promise<Response> {
+    async import_grade_level_classes(
+        data: { grade_9: string[], grade_10: string[], grade_11: string[], grade_12: string[] }
+    ) {
+        await this.call(`/api/import/grade_level_classes?id=${this.id}`, 'POST', JSON.stringify(data));
+    }
+
+    private async call(url: string, method: string, data?: string): Promise<Response> {
         return fetch(
             this.backend_url + url,
             {
