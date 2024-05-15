@@ -1,23 +1,13 @@
-import { useState, useCallback, useEffect, createRef, ChangeEvent } from 'react';
+import { useState, useCallback, useMemo, useEffect, createRef, ChangeEvent } from 'react';
 
 import './App.css';
 
-import { Schedule, SchedulePeriod } from './Schedule';
+import { Schedule, SchedulePeriodProp } from './Schedule';
 import { ArrowDownTrayIcon, ArrowPathIcon } from '@heroicons/react/20/solid';
 
+import { ScheduleResponse, FlaskBackend } from './api';
+
 import Papa from 'papaparse';
-
-type SchedulePeriodResponse = {
-    period: number;
-    classes: string[][];
-}
-
-type ScheduleResponse = {
-    body: {
-        grade: number,
-        schedule: SchedulePeriodResponse[]
-    };
-}
 
 type DataRow = {
     "Grade 9": string,
@@ -40,13 +30,19 @@ function App(this: unknown) {
 
     const fileInput = createRef<HTMLInputElement>();
 
+    const flask_backend = useMemo<FlaskBackend>(() => {
+        return new FlaskBackend("generic_id")
+    }, []);
+
     const fetchData = useCallback(() => {
-        fetch(import.meta.env.VITE_BACKEND_URL + "api/generate_schedule/grade=" + grade)
-            .then(res => res.json())
-            .then(data => setData(data));
+        async function get_schedule() {
+            setData(await flask_backend.generate_schedule(grade));
+        }
+
+        get_schedule()
 
         setDataCounter(prevDataCounter => prevDataCounter + 1);
-    }, [grade]);
+    }, [grade, flask_backend]);
 
     const switchGrade = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -121,7 +117,10 @@ function App(this: unknown) {
                 {(data == null) ? (
                     <h1>Loading...</h1>
                 ) : (
-                    <Schedule periods={data.body.schedule.map((element: SchedulePeriodResponse): SchedulePeriod => {
+                    <Schedule flask_backend={flask_backend} schedule={data.body.schedule.map((element: {
+                        period: number;
+                        classes: string[][];
+                    }): SchedulePeriodProp => {
                         return {
                             period: element.period,
                             classes: element.classes.map((className: string[]) => ({

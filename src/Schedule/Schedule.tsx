@@ -3,8 +3,9 @@ import { useState, useCallback, useEffect } from 'react';
 import { CSVLink } from "react-csv";
 
 import { ArrowUpTrayIcon } from '@heroicons/react/20/solid';
+import { FlaskBackend } from '../api';
 
-export type SchedulePeriod = {
+export type SchedulePeriodProp = {
     period: number;
     classes: {
         name: string;
@@ -13,7 +14,17 @@ export type SchedulePeriod = {
 }
 
 export type ScheduleProps = {
-    periods: SchedulePeriod[];
+    schedule: SchedulePeriodProp[];
+    flask_backend: FlaskBackend;
+};
+
+type SchedulePeriod = {
+    period: number,
+    conflicts: number,
+    classes: {
+        name: string,
+        id: string,
+    }[],
 };
 
 type ClassId = {
@@ -26,49 +37,31 @@ type SwapAction = {
     second: ClassId
 }
 
-type ScheduleExportPeriodIds = {
-    period1ClassIds: string;
-    period2ClassIds: string;
-    period3ClassIds: string;
-    period4ClassIds: string;
-    period5ClassIds: string;
-    period6ClassIds: string;
-    period7ClassIds: string;
-};
-
 export function Schedule(props: ScheduleProps) {
     const [highlightedClasses, setHighlightedClasses] = useState<ClassId[]>([]);
-    const [periods, setPeriods] = useState<SchedulePeriod[]>(props.periods);
-    const [classConflicts, setClassConflicts] = useState<number[]>([]);
+    const [periods, setPeriods] = useState<SchedulePeriod[]>(props.schedule.map((period: SchedulePeriodProp) => {
+        return {
+            period: period.period,
+            conflicts: 0,
+            classes: period.classes
+        };
+    }));
     const [swapCounter, setSwapCounter] = useState<number>(0);
     const [outlinedClasses, setOutlinedClasses] = useState<ClassId[]>([]);
     const [actionList, setActionList] = useState<SwapAction[]>([]);
     const [undoIndex, setUndoIndex] = useState<number | null>(null);
-    const [exportScheduleData, setExportScheduleData] = useState<ScheduleExportPeriodIds[]>([]);
 
     useEffect(() => {
-        setClassConflicts([])
+        periods.forEach(async (period, i) => {
+            const conflicts = await props.flask_backend.calculate_conflicts(period.classes);
+            setPeriods((prevPeriods) => {
+                const newPeriods = [...prevPeriods];
+                newPeriods[i] = { ...newPeriods[i], conflicts };
+                return newPeriods;
+            });
+        });
+    }, [periods, props.flask_backend]);
 
-        for (let i = 0; i < periods.length; i++) {
-            (function(index: number) {
-                fetch(import.meta.env.VITE_BACKEND_URL + "api/calculate_conflicts", {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(periods[index].classes)
-                }).then(res => res.json())
-                    .then(currentPeriod => {
-                        setClassConflicts(classConflicts => {
-                            const classConflict = [...classConflicts]
-
-                            classConflict[index] = currentPeriod.conflicts
-
-                            return classConflict;
-                        })
-                    })
-            })(i);
-        }
-
-    }, [periods]);
 
     const classesContains = useCallback((id: ClassId) => {
         return highlightedClasses.some(element => element.i == id.i && element.j == id.j);
@@ -84,6 +77,7 @@ export function Schedule(props: ScheduleProps) {
         setPeriods(prevPeriods => prevPeriods.map((period: SchedulePeriod, i: number) => {
             return {
                 period: period.period,
+                conflicts: period.conflicts,
                 classes: period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
                     let class_id: ClassId | null = null;
 
@@ -186,28 +180,41 @@ export function Schedule(props: ScheduleProps) {
         }
     }, [undo, redo]);
 
-    useEffect(() => {
-        const exportSchedule: ScheduleExportPeriodIds[] = [];
-        let highestLength: number = 0;
+    const get_exported_data = useCallback(() => {
+        const exported_schedule: {
+            period_one: string,
+            period_two: string,
+            period_three: string,
+            period_four: string,
+            period_five: string,
+            period_six: string,
+            period_seven: string,
+        }[] = [];
+
+        let highest_length = 0;
+
         periods.forEach((value) => {
-            if (value["classes"].length > highestLength) {
-                highestLength = value["classes"].length;
+            if (value.classes.length > highest_length) {
+                highest_length = value.classes.length;
             }
         });
-        for (let i: number = 0; i < highestLength; i++) {
-            const row: ScheduleExportPeriodIds = {
-                period1ClassIds: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['id'],
-                period2ClassIds: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['id'],
-                period3ClassIds: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['id'],
-                period4ClassIds: periods[3]["classes"][i] == undefined ? "" : periods[3]["classes"][i]['id'],
-                period5ClassIds: periods[4]["classes"][i] == undefined ? "" : periods[4]["classes"][i]['id'],
-                period6ClassIds: periods[5]["classes"][i] == undefined ? "" : periods[5]["classes"][i]['id'],
-                period7ClassIds: periods[6]["classes"][i] == undefined ? "" : periods[6]["classes"][i]['id'],
-            };
-            exportSchedule.push(row);
+
+        for (let i = 0; i < highest_length; i++) {
+            const row = {
+                period_one: periods[0]["classes"][i] == undefined ? "" : periods[0]["classes"][i]['id'],
+                period_two: periods[1]["classes"][i] == undefined ? "" : periods[1]["classes"][i]['id'],
+                period_three: periods[2]["classes"][i] == undefined ? "" : periods[2]["classes"][i]['id'],
+                period_four: periods[3]["classes"][i] == undefined ? "" : periods[3]["classes"][i]['id'],
+                period_five: periods[4]["classes"][i] == undefined ? "" : periods[4]["classes"][i]['id'],
+                period_six: periods[5]["classes"][i] == undefined ? "" : periods[5]["classes"][i]['id'],
+                period_seven: periods[6]["classes"][i] == undefined ? "" : periods[6]["classes"][i]['id'],
+            }
+
+            exported_schedule.push(row);
         }
-        setExportScheduleData(exportSchedule);
-    }, [periods]);
+
+        return exported_schedule;
+    }, [periods])
 
     document.onkeydown = onKeyPressHandler;
 
@@ -215,11 +222,12 @@ export function Schedule(props: ScheduleProps) {
         <div className='m-auto flex flex-col'>
             <div className='flex flex-row m-2 bg-gray-50 shadow-md rounded-xl p-4'>
                 {periods.map((period: SchedulePeriod, i: number) => {
+                    console.log(periods)
                     return (
                         <div className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-xl shadow-md bg-gray-100' key={swapCounter + i}>
                             <div>
                                 <p>Period {period.period}</p>
-                                <p>Conflicts: {(classConflicts.length != 0 && classConflicts[period.period - 1] != undefined) ? classConflicts[period.period - 1] : 0}</p>
+                                <p>Conflicts: {period.conflicts}</p>
                             </div>
                             {period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
                                 const id: ClassId = {
@@ -251,13 +259,13 @@ export function Schedule(props: ScheduleProps) {
                     <></>
             }
             <CSVLink
-                data={exportScheduleData}
+                data={get_exported_data()}
                 filename='schedule.csv'
                 className='btn h-10 w-40 justify-center self-center'
                 target='_blank'
             >
-                <ArrowUpTrayIcon className='h-6 w-6' /> 
-                <span>Export</span> 
+                <ArrowUpTrayIcon className='h-6 w-6' />
+                <span>Export</span>
             </CSVLink>
         </div >
 
