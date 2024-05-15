@@ -45,6 +45,7 @@ class Graph:
 
         return buffer
 
+
 # adds of the classes and conflicts as nodes and edges to a graph
 def create_graph(classes: dict[str, dict[str, int]]) -> Graph:
     class_graph = Graph()
