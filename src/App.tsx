@@ -10,6 +10,7 @@ import { ScheduleResponse, FlaskBackend } from './api';
 import { v4 as uuidv4 } from 'uuid';
 
 import Papa from 'papaparse';
+import { Modal } from './Modal';
 
 type DataRow = {
     "Grade 9": string,
@@ -144,6 +145,9 @@ function App() {
             </div>
 
             <div className='m-auto'>
+                <Modal name="Test">
+                    <h1>Hello!</h1>
+                </Modal>
                 <button className='btn' onClick={fetchData} >
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
