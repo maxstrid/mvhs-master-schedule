@@ -6,7 +6,9 @@ import pandas as pd
 
 import os
 
+
 class GradeLevelClassParser:
+
     def __init__(self, conflict_calculator: ConflictCalculator):
         self.conflict_calculator = conflict_calculator
 
@@ -34,7 +36,8 @@ class GradeLevelClassParser:
                     continue
 
                 period_classlist[schedule_class.strip(
-                )] = self.conflict_calculator.course_list[schedule_class.strip()]
+                )] = self.conflict_calculator.course_list[
+                    schedule_class.strip()]
 
             grade_classes.update({period: period_classlist})
 

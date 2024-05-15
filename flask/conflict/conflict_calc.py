@@ -8,6 +8,7 @@ CourseMap = dict[str, str]
 
 
 class ConflictCalculator:
+
     def __init__(self, filename: None | str = None):
         # Creates map containing class and its corresponding conflicts with each class
         self.course_list: CourseList = {}

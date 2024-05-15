@@ -1,11 +1,9 @@
 from conflict.conflict_calc import ConflictCalculator
 
-
 ConflictResponseBody = dict[str, int]
 
 ScheduleResponseBody = dict[str,
                             int | list[dict[str, int | list[tuple[str, str]]]]]
-
 """
     Generates a response when the server requests the number of conflicts in a period.
 
@@ -15,9 +13,11 @@ ScheduleResponseBody = dict[str,
     }
 """
 
+
 class ConflictResponse:
 
-    def __init__(self, period: list, conflict_calculator: ConflictCalculator) -> None:
+    def __init__(self, period: list,
+                 conflict_calculator: ConflictCalculator) -> None:
         self.body: ConflictResponseBody = {"conflicts": 0}
         self.currentPeriod = period
         self.conflict_calculator = conflict_calculator
@@ -43,6 +43,8 @@ class ConflictResponse:
         }]
     }
 """
+
+
 class ScheduleResponse:
 
     def __init__(self, grade_level: int) -> None:
