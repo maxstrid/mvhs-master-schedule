@@ -5,6 +5,7 @@ from numpy import NaN
 import pandas as pd
 
 import os
+import io
 
 
 class GradeLevelClassParser:
@@ -15,6 +16,18 @@ class GradeLevelClassParser:
     def parse_from_file(self, filename: str) -> dict[int, Classlist]:
         dirname = os.path.dirname(__file__) + "/../"
         class_lists = pd.read_csv(os.path.join(dirname, filename))
+
+        classes = {
+            9: class_lists["Grade 9"].tolist(),
+            10: class_lists["Grade 10"].tolist(),
+            11: class_lists["Grade 11"].tolist(),
+            12: class_lists["Grade 12"].tolist(),
+        }
+
+        return self.parse(classes)
+
+    def parse_from_string(self, data: str) -> dict[int, Classlist]:
+        class_lists = pd.read_csv(io.StringIO(data))
 
         classes = {
             9: class_lists["Grade 9"].tolist(),

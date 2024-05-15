@@ -106,18 +106,11 @@ def import_grade_level_classes():
 
     client_data = clients[args["id"]]
 
-    class_lists = request.get_json()
-
-    classes = {
-        9: class_lists["grade_9"],
-        10: class_lists["grade_10"],
-        11: class_lists["grade_11"],
-        12: class_lists["grade_12"],
-    }
+    grade_level_class_data = request.get_json()['data']
 
     parser = GradeLevelClassParser(client_data.conflict_calculator)
 
-    client_data.grade_level_classes = parser.parse(classes)
+    client_data.grade_level_classes = parser.parse_from_string(grade_level_class_data)
 
     return ""
 
@@ -125,12 +118,6 @@ def import_grade_level_classes():
 @app.route("/api/import/conlict_matrix", methods=["POST"])
 def import_conflict_matrix():
     return ""
-
-
-@app.route("/api/import/schedule", methods=["POST"])
-def import_schedule():
-    return ""
-
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 8080))
