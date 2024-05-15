@@ -9,25 +9,18 @@ import { ScheduleResponse, FlaskBackend } from './api';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import Papa from 'papaparse';
+import { Modal } from './Modal';
 
-type DataRow = {
-    "Grade 9": string,
-    "Grade 10": string,
-    "Grade 11": string,
-    "Grade 12": string,
-    "Total # of Sections": string,
-    "Total # of Sections_1": string,
-    "Total # of Sections_2": string,
-    "Total # of Sections_3": string,
+enum ImportType {
+    GradeLevelClasses = "GradeLevelClasses",
+    ConflictMatrix = "ConflictMatrix",
 }
 
 function App() {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
-    const [importData, setImportData] = useState<DataRow[]>([]);
-    const [fileImported, setFileImported] = useState<boolean>(false);
+    const [importType, setImportType] = useState<ImportType>(ImportType.GradeLevelClasses);
 
     const fileInput = createRef<HTMLInputElement>();
 
@@ -60,52 +53,22 @@ function App() {
 
     const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = (e.target as HTMLInputElement).files![0];
-        Papa.parse(file, {
-            header: true,
-            skipEmptyLines: true,
-            delimiter: ",",
-            complete: (results: any) => {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                setImportData(results.data);
-            }
-        })
-        setFileImported(true);
 
-    }, []);
-
-    const sendFileData = useCallback(() => {
-        const grade_9: string[] = [];
-        const grade_10: string[] = [];
-        const grade_11: string[] = [];
-        const grade_12: string[] = [];
-
-        for (const row of importData) {
-            if (row["Grade 9"] != "") {
-                grade_9.push(row["Grade 9"]);
+        file.text().then(text => {
+            switch (importType) {
+                case ImportType.GradeLevelClasses:
+                    flask_backend.import_grade_level_classes(text);
+                    break;
+                case ImportType.ConflictMatrix:
+                    flask_backend.import_conflict_matrix(text);
+                    break;
             }
-            if (row["Grade 10"] != "") {
-                grade_10.push(row["Grade 10"]);
-            }
-            if (row["Grade 11"] != "") {
-                grade_11.push(row["Grade 11"]);
-            }
-            if (row["Grade 12"] != "") {
-                grade_12.push(row["Grade 12"]);
-            }
-        }
-
-        flask_backend.import_grade_level_classes({
-            grade_9: grade_9,
-            grade_10: grade_10,
-            grade_11: grade_11,
-            grade_12: grade_12
         });
-    }, [importData, flask_backend]);
+
+
+    }, [importType, flask_backend]);
 
     useEffect(() => fetchData(), [fetchData, grade]);
-
-    useEffect(() => {
-        if (fileImported) sendFileData()
-    }, [importData, fileImported, sendFileData]);
 
     return (
         <div className='flex flex-col m-auto'>
@@ -144,15 +107,27 @@ function App() {
             </div>
 
             <div className='m-auto'>
+                <Modal name="Import">
+                    <button className='btn' onClick={() => {
+                        setImportType(ImportType.GradeLevelClasses);
+                        fileInput?.current?.click();
+                    }}>
+                        <ArrowDownTrayIcon className='h-6 w-6' />
+                        <span>Grade Level Classes</span>
+                    </button>
+                    <button className='btn' onClick={() => {
+                        setImportType(ImportType.ConflictMatrix);
+                        fileInput?.current?.click();
+                    }}>
+                        <ArrowDownTrayIcon className='h-6 w-6' />
+                        <span>Conflict Matrix</span>
+                    </button>
+                    <input ref={fileInput} type="file" accept=".*" onChange={handleFileUpload} hidden></input>
+                </Modal>
                 <button className='btn' onClick={fetchData} >
                     <ArrowPathIcon className='h-6 w-6' />
                     <span>Regenerate</span>
                 </button>
-                <button className='btn' onClick={() => fileInput?.current?.click()}>
-                    <ArrowDownTrayIcon className='h-6 w-6' />
-                    <span>Import</span>
-                </button>
-                <input ref={fileInput} type="file" accept=".csv" onChange={handleFileUpload} hidden></input>
             </div>
         </div >
     );

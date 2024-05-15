@@ -26,34 +26,38 @@ class ConflictCalculator:
 
     def parse_file(self):
         with open(str(self.filename), 'r') as file:
-            current_course_id = ""
+            data = file.read()
+            self.parse(data)
 
-            for line in file:
-                # splits each row of the file by commas
-                # if row only contains two comparing classes, blank placeholder values
-                # adds comparing class to the last column
+    def parse(self, data: str):
+        current_course_id = ""
 
-                # This is a title line, skip
-                if "Crs#" in line or "Course Conflict Matrix" in line:
-                    continue
+        for line in data.splitlines():
+            # splits each row of the file by commas
+            # if row only contains two comparing classes, blank placeholder values
+            # adds comparing class to the last column
 
-                row = line.strip().split(",")
-                if (len(row) == 2):
-                    current_course_id = row[0].strip()
-                    if row[1].strip() not in self.course_map:
-                        self.course_map[current_course_id] = row[1].strip()
-                    continue
+            # This is a title line, skip
+            if "Crs#" in line or "Course Conflict Matrix" in line:
+                continue
 
-                chunks = [row[x:x + 3] for x in range(0, len(row), 3)]
+            row = line.strip().split(",")
+            if (len(row) == 2):
+                current_course_id = row[0].strip()
+                if row[1].strip() not in self.course_map:
+                    self.course_map[current_course_id] = row[1].strip()
+                continue
 
-                for chunk in chunks:
-                    if current_course_id not in self.course_list:
-                        self.course_list[current_course_id] = {}
+            chunks = [row[x:x + 3] for x in range(0, len(row), 3)]
 
-                    conflicting_course = chunk[0].strip()
+            for chunk in chunks:
+                if current_course_id not in self.course_list:
+                    self.course_list[current_course_id] = {}
 
-                    self.course_list[current_course_id][
-                        conflicting_course] = int(chunk[2])
+                conflicting_course = chunk[0].strip()
+
+                self.course_list[current_course_id][conflicting_course] = int(
+                    chunk[2])
 
         print("File Parsed")
 
