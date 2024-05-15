@@ -33,10 +33,12 @@ export class FlaskBackend {
         return schedule_response
     }
 
-    async import_grade_level_classes(
-        data: { grade_9: string[], grade_10: string[], grade_11: string[], grade_12: string[] }
-    ) {
-        await this.call(`/api/import/grade_level_classes?id=${this.id}`, 'POST', JSON.stringify(data));
+    async import_grade_level_classes(data: string) {
+        await this.call(`/api/import/grade_level_classes?id=${this.id}`, 'POST', JSON.stringify({ data: data }));
+    }
+
+    async import_conflict_matrix(data: string) {
+        await this.call(`/api/import/conflict_matrix?id=${this.id}`, 'POST', JSON.stringify({ data: data }));
     }
 
     private async call(url: string, method: string, data?: string): Promise<Response> {

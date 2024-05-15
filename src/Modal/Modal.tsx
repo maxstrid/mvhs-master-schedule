@@ -1,3 +1,4 @@
+import { Bars4Icon, XCircleIcon } from '@heroicons/react/20/solid';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function Modal(props: { name: string, children: React.ReactNode }) {
@@ -24,13 +25,17 @@ export function Modal(props: { name: string, children: React.ReactNode }) {
     return (
         <>
             <dialog ref={ref} onCancel={close_modal} className='p-4 rounded-md'>
-                {props.children}
-                <button className='btn' onClick={close_modal}>
-                    Close
-                </button>
+                <div className='flex flex-col justify-between'>
+                    {props.children}
+                    <button className='btn' onClick={close_modal} >
+                        <XCircleIcon className='h-6 w-6' />
+                        <span>Close</span>
+                    </button>
+                </div>
             </dialog>
-            <button className='btn' onClick={open_modal}>
-                {props.name}
+            <button className='btn' onClick={open_modal} >
+                <Bars4Icon className='h-6 w-6' />
+                <span>{props.name}</span>
             </button>
         </>
     )
