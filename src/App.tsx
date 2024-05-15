@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect, createRef, ChangeEvent } from 'react';
+import { useState, useCallback, useMemo, useEffect, createRef } from 'react';
 
 import './App.css';
 
@@ -20,8 +20,7 @@ type DataRow = {
     "Total # of Sections_3": string,
 }
 
-//TODO(max): Add the real type
-function App(this: unknown) {
+function App() {
     const [data, setData] = useState<ScheduleResponse | null>(null);
     const [dataCounter, setDataCounter] = useState<number>(0);
     const [grade, setGrade] = useState<number>(9);
@@ -35,14 +34,14 @@ function App(this: unknown) {
     }, []);
 
     const fetchData = useCallback(() => {
-        async function get_schedule() {
-            setData(await flask_backend.generate_schedule(grade));
-        }
-
-        get_schedule()
-
-        setDataCounter(prevDataCounter => prevDataCounter + 1);
+        flask_backend.generate_schedule(grade).then(schedule_response => {
+            setData(schedule_response);
+        });
     }, [grade, flask_backend]);
+
+    useEffect(() => {
+        setDataCounter(counter => counter + 1);
+    }, [data]);
 
     const switchGrade = useCallback((e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -50,7 +49,7 @@ function App(this: unknown) {
         setGrade(parseInt(Object.fromEntries(formData.entries())['selectedGrade'].toString()));
     }, []);
 
-    const handleFileUpload = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = (e.target as HTMLInputElement).files![0];
         Papa.parse(file, {
             header: true,
@@ -65,37 +64,38 @@ function App(this: unknown) {
     }, []);
 
     const sendFileData = useCallback(() => {
-        if (fileImported == true) {
-            const grade9Classes: string[] = [];
-            const grade10Classes: string[] = [];
-            const grade11Classes: string[] = [];
-            const grade12Classes: string[] = [];
+        const grade9Classes: string[] = [];
+        const grade10Classes: string[] = [];
+        const grade11Classes: string[] = [];
+        const grade12Classes: string[] = [];
 
-            for (const row of importData) {
-                if (row["Grade 9"] != "") {
-                    grade9Classes.push(row["Grade 9"]);
-                }
-                if (row["Grade 10"] != "") {
-                    grade10Classes.push(row["Grade 10"]);
-                }
-                if (row["Grade 11"] != "") {
-                    grade11Classes.push(row["Grade 11"]);
-                }
-                if (row["Grade 12"] != "") {
-                    grade12Classes.push(row["Grade 12"]);
-                }
+        for (const row of importData) {
+            if (row["Grade 9"] != "") {
+                grade9Classes.push(row["Grade 9"]);
             }
-
-            fetch(import.meta.env.VITE_BACKEND_URL + "api/import_csv_data", {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes })
-            }).then();
+            if (row["Grade 10"] != "") {
+                grade10Classes.push(row["Grade 10"]);
+            }
+            if (row["Grade 11"] != "") {
+                grade11Classes.push(row["Grade 11"]);
+            }
+            if (row["Grade 12"] != "") {
+                grade12Classes.push(row["Grade 12"]);
+            }
         }
-    }, [importData, fileImported]);
+
+        fetch(import.meta.env.VITE_BACKEND_URL + "api/import_csv_data", {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ grade9Classes: grade9Classes, grade10Classes: grade10Classes, grade11Classes: grade11Classes, grade12Classes: grade12Classes })
+        }).then();
+    }, [importData]);
 
     useEffect(() => fetchData(), [fetchData, grade]);
-    useEffect(() => sendFileData(), [importData, fileImported, sendFileData]);
+
+    useEffect(() => {
+        if (fileImported) sendFileData()
+    }, [importData, fileImported, sendFileData]);
 
     return (
         <div className='flex flex-col m-auto'>

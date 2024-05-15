@@ -27,13 +27,13 @@ export class FlaskBackend {
 
     async generate_schedule(grade: number): Promise<ScheduleResponse> {
         const schedule_response = await this.call(
-            `/api/generate_schedule?grade=${grade}&id=${this.id}`, 'GET', null
+            `/api/generate_schedule?grade=${grade}&id=${this.id}`, 'GET', undefined
         ).then(res => res.json());
 
         return schedule_response
     }
 
-    async call(url: string, method: string, data: string | null): Promise<Response> {
+    async call(url: string, method: string, data?: string): Promise<Response> {
         return fetch(
             this.backend_url + url,
             {

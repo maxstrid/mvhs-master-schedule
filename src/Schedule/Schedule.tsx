@@ -5,7 +5,7 @@ import { CSVLink } from "react-csv";
 import { ArrowUpTrayIcon } from '@heroicons/react/20/solid';
 import { FlaskBackend } from '../api';
 
-export type SchedulePeriodProp = {
+export type SchedulePeriod = {
     period: number;
     classes: {
         name: string;
@@ -14,17 +14,8 @@ export type SchedulePeriodProp = {
 }
 
 export type ScheduleProps = {
-    schedule: SchedulePeriodProp[];
+    schedule: SchedulePeriod[];
     flask_backend: FlaskBackend;
-};
-
-type SchedulePeriod = {
-    period: number,
-    conflicts: number,
-    classes: {
-        name: string,
-        id: string,
-    }[],
 };
 
 type ClassId = {
@@ -39,26 +30,21 @@ type SwapAction = {
 
 export function Schedule(props: ScheduleProps) {
     const [highlightedClasses, setHighlightedClasses] = useState<ClassId[]>([]);
-    const [periods, setPeriods] = useState<SchedulePeriod[]>(props.schedule.map((period: SchedulePeriodProp) => {
-        return {
-            period: period.period,
-            conflicts: 0,
-            classes: period.classes
-        };
-    }));
+    const [periods, setPeriods] = useState<SchedulePeriod[]>(props.schedule);
+    const [classCOnflicts, setClassConflicts] = useState<number[]>([]);
     const [swapCounter, setSwapCounter] = useState<number>(0);
     const [outlinedClasses, setOutlinedClasses] = useState<ClassId[]>([]);
     const [actionList, setActionList] = useState<SwapAction[]>([]);
     const [undoIndex, setUndoIndex] = useState<number | null>(null);
 
     useEffect(() => {
-        periods.forEach(async (period, i) => {
-            const conflicts = await props.flask_backend.calculate_conflicts(period.classes);
-            setPeriods((prevPeriods) => {
-                const newPeriods = [...prevPeriods];
-                newPeriods[i] = { ...newPeriods[i], conflicts };
-                return newPeriods;
-            });
+        periods.forEach((period, i) => {
+            props.flask_backend.calculate_conflicts(period.classes)
+                .then(conflict_response => setClassConflicts((prev_conflicts) => {
+                    const new_conflicts = [...prev_conflicts];
+                    new_conflicts[i] = conflict_response;
+                    return new_conflicts;
+                }));
         });
     }, [periods, props.flask_backend]);
 
@@ -77,7 +63,6 @@ export function Schedule(props: ScheduleProps) {
         setPeriods(prevPeriods => prevPeriods.map((period: SchedulePeriod, i: number) => {
             return {
                 period: period.period,
-                conflicts: period.conflicts,
                 classes: period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
                     let class_id: ClassId | null = null;
 
@@ -222,12 +207,11 @@ export function Schedule(props: ScheduleProps) {
         <div className='m-auto flex flex-col'>
             <div className='flex flex-row m-2 bg-gray-50 shadow-md rounded-xl p-4'>
                 {periods.map((period: SchedulePeriod, i: number) => {
-                    console.log(periods)
                     return (
                         <div className='mr-2 ml-2 mb-1 mt-1 p-2 text-center rounded-xl shadow-md bg-gray-100' key={swapCounter + i}>
                             <div>
                                 <p>Period {period.period}</p>
-                                <p>Conflicts: {period.conflicts}</p>
+                                <p>Conflicts: {classCOnflicts[i]}</p>
                             </div>
                             {period.classes.map((schedule_class: { name: string, id: string }, j: number) => {
                                 const id: ClassId = {
