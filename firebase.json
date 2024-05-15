@@ -3,7 +3,7 @@
     "public": "dist",
     "rewrites": [
         {
-            "source": "**",
+            "source": "*/api*",
             "run": {
                 "serviceId": "flask",
                 "region": "us-west1",
